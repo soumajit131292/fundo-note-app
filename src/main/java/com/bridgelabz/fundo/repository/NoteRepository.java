@@ -14,7 +14,7 @@ public interface NoteRepository {
 
 	void deleteNote(Integer noteId);
 
-	List<Note> getNotes();
+	List<Note> getNotebyUserId(Integer id);
 
 	public void changePinStatus(Integer noteId, boolean status);
 

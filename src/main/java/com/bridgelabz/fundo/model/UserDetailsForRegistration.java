@@ -47,5 +47,4 @@ public class UserDetailsForRegistration {
 		}
 		note.add(theReview);
 	}
-
 }

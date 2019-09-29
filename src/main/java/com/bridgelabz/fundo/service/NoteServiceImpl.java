@@ -77,7 +77,7 @@ public class NoteServiceImpl implements NoteService {
 	public List<Note> getAllNotes(String token) {
 		Integer id = Util.parseToken(token);
 		if (userService.isUserPresent(id)) {
-			return noteDao.getNotes();
+			return noteDao.getNotebyUserId(id);
 		}
 		return null;
 	}
@@ -95,7 +95,7 @@ public class NoteServiceImpl implements NoteService {
 	public void sortByDateDescending(String token) {
 		Integer id = Util.parseToken(token);
 		if (userService.isUserPresent(id)) {
-			List<Note> notes = noteDao.getNotes();
+			List<Note> notes = noteDao.getNotebyUserId(id);
 			notes.stream().sorted((p1, p2) -> p2.getCreatedOn().compareTo(p1.getCreatedOn()))
 					.collect(Collectors.toList()).forEach(System.out::println);
 			
@@ -106,7 +106,7 @@ public class NoteServiceImpl implements NoteService {
 	public void sortByDateAscending(String token) {
 		Integer id = Util.parseToken(token);
 		if (userService.isUserPresent(id)) {
-			List<Note> notes = noteDao.getNotes();
+			List<Note> notes = noteDao.getNotebyUserId(id);
 			notes.stream().sorted((p1, p2) -> p1.getCreatedOn().compareTo(p2.getCreatedOn()))
 					.collect(Collectors.toList()).forEach(System.out::println);
 		}

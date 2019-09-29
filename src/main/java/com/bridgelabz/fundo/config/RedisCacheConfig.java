@@ -10,7 +10,7 @@ import org.springframework.data.redis.serializer.GenericToStringSerializer;
 @Configuration
 public class RedisCacheConfig {
 
-	@Bean
+	/*@Bean
 	JedisConnectionFactory jedisConnectionFactory() {
 	    return new JedisConnectionFactory();
 	}
@@ -20,6 +20,6 @@ public class RedisCacheConfig {
 	    template.setConnectionFactory(jedisConnectionFactory());
 	    template.setValueSerializer(new GenericToStringSerializer<Object>(Object.class));
 	    return template;
-	}
+	}*/
 
 }

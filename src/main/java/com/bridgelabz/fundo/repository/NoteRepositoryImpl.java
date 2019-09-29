@@ -57,9 +57,11 @@ public class NoteRepositoryImpl implements NoteRepository {
 
 	@Override
 	@Transactional
-	public List<Note> getNotes() {
+	public List<Note> getNotebyUserId(Integer id) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		return currentSession.createQuery("from Note").getResultList();
+		//return currentSession.createQuery("from Note where ").getResultList();
+	//return	currentSession.createQuery("select b.id,b.description,b.title from UserDetailsForRegistration a inner join Note b on a.id=b.user_id").getResultList();
+		return currentSession.createQuery("from Note where user_id='"+id+"'").getResultList();
 	}
 
 	@Override
