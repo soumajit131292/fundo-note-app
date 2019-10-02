@@ -43,30 +43,22 @@ public class NoteController {
 
 	@GetMapping("/getnotes")
 	public List<Note> getNotes(@RequestHeader("token") String token) {
-	return	noteService.getAllNotes(token);
-		
+		return noteService.getAllNotes(token);
 	}
+
 	@PostMapping("/changePin/{noteId}")
-	public void changePin(@RequestBody NoteDto note,@RequestHeader("token") String token,@PathVariable("noteId") Integer noteId,@RequestParam boolean status )
-	{
-		noteService.changePin(token,noteId,note,status);
+	public void changePin(@RequestBody NoteDto note, @RequestHeader("token") String token,
+			@PathVariable("noteId") Integer noteId, @RequestParam boolean status) {
+		noteService.changePin(token, noteId, note, status);
 	}
-	
+
 	@PostMapping("/sortingbydatedecending")
-	public void sortByDateDecending(@RequestHeader("token") String token)
-	{
+	public void sortByDateDecending(@RequestHeader("token") String token) {
 		noteService.sortByDateAscending(token);
 	}
+
 	@PostMapping("/sortingbydateascending")
-	public void sortByDateAscending(@RequestHeader("token") String token)
-	{
+	public void sortByDateAscending(@RequestHeader("token") String token) {
 		noteService.sortByDateAscending(token);
 	}
-
-
 }
-
-
-
-
-

@@ -11,4 +11,5 @@ public interface UserRepository {
 	public int updatePassword(Integer Id, UserDetailsForRegistration userDetails);
 	public List<UserDetailsForRegistration> getUserbyId(Integer id);
 	boolean isValidUser(Integer Id);
+	public UserDetailsForRegistration getUserByMail(String email);
 }

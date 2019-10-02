@@ -1,11 +1,14 @@
 package com.bridgelabz.fundo.repository;
 
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
+
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
 import com.bridgelabz.fundo.model.Label;
 import com.bridgelabz.fundo.model.Note;
 
@@ -34,9 +37,9 @@ public class LabelRepositoryImpl implements LabelRepository {
 
 	@Override
 	@Transactional
-	public List<Label> getLabelByLabelId(Integer labelId) {
+	public Label getLabelByLabelId(Integer labelId) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		return currentSession.createQuery("from Label where id='" + labelId + "'").getResultList();
+		return (Label) currentSession.createQuery("from Label where id='" + labelId + "'").uniqueResult();
 	}
 
 	@Override
@@ -49,6 +52,6 @@ public class LabelRepositoryImpl implements LabelRepository {
 	@Override
 	public List<Label> getLabel(Integer id) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		return currentSession.createQuery("from Label where id='"+id+"'").getResultList();
+		return currentSession.createQuery("from Label where userId='"+id+"'").getResultList();
 	}
 }

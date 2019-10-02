@@ -126,7 +126,15 @@ public class UserRepositoryImpl implements UserRepository {
 				.createQuery("from UserDetailsForRegistration where id='" + id + "'").getResultList();
 		return oneUser;
 	}
-
+@Override
+@Transactional
+public UserDetailsForRegistration getUserByMail(String email)
+{
+	Session currentSession = entityManager.unwrap(Session.class);
+	UserDetailsForRegistration user= (UserDetailsForRegistration) currentSession.createQuery("from UserDetailsForRegistration where emailId='"+email+"'").uniqueResult();
+	return user;
+	
+	}
 	@Transactional
 	public List<UserDetailsForRegistration> checkUser(Integer Id) {
 		String activeStatus = "true";

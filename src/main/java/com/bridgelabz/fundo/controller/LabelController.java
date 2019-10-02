@@ -45,8 +45,15 @@ public class LabelController {
 	@GetMapping("/getlabels")
 	public List<Label> getAllLabel(@RequestParam String token)
 	{
-		return labelService.getLabels(token);
+		return labelService.getAllLabels(token);
+	}
+	@PutMapping("/update/{noteId}/{labelId}")
+	public void addExistingLabelLabelOnNote(@PathVariable Integer noteId,@PathVariable Integer labelId, @RequestParam String token) {
+		labelService.addExistingLabelOnNote(labelId,noteId,token);
 	}
 	
-	
 }
+
+
+
+

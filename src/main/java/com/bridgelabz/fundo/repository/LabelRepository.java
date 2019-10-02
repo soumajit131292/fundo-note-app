@@ -11,7 +11,7 @@ public interface LabelRepository {
 
 	void saveLabel(Label label);
 
-	List<Label> getLabelByLabelId(Integer labelId);
+	Label getLabelByLabelId(Integer labelId);
 
 	void deleteLabel(Integer labelId);
 

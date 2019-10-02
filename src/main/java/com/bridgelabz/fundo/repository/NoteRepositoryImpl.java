@@ -32,11 +32,9 @@ public class NoteRepositoryImpl implements NoteRepository {
 
 	@Override
 	@Transactional
-	public List<Note> getNotebyNoteId(Integer noteId) {
-
+	public Note getNotebyNoteId(Integer noteId) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		List<Note> note = currentSession.createQuery("from Note where Id='" + noteId + "'").getResultList() ;
-
+		Note note = (Note) currentSession.createQuery("from Note where Id='" + noteId + "'").uniqueResult();
 		return note;
 	}
 
@@ -45,7 +43,6 @@ public class NoteRepositoryImpl implements NoteRepository {
 	public void updateNote(Integer noteId, Note createdNoteByUser) {
 		Session currentSession = entityManager.unwrap(Session.class);
 		currentSession.save(createdNoteByUser);
-
 	}
 
 	@Override
@@ -59,17 +56,16 @@ public class NoteRepositoryImpl implements NoteRepository {
 	@Transactional
 	public List<Note> getNotebyUserId(Integer id) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		//return currentSession.createQuery("from Note where ").getResultList();
-	//return	currentSession.createQuery("select b.id,b.description,b.title from UserDetailsForRegistration a inner join Note b on a.id=b.user_id").getResultList();
-		return currentSession.createQuery("from Note where user_id='"+id+"'").getResultList();
+		return currentSession.createQuery("from Note where user_id='" + id + "'").getResultList();
 	}
 
 	@Override
 	@Transactional
-	public void changePinStatus(Integer noteId,boolean isPinned) {
+	public void changePinStatus(Integer noteId, boolean isPinned) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		//currentSession.createQuery("update Note set isPinned='"+status+"'where noteId='"+noteId+"'").executeUpdate();
-		Query query=currentSession.createQuery("update Note set isPinned=:isPinned where Id=:noteId");
+		// currentSession.createQuery("update Note set isPinned='"+status+"'where
+		// noteId='"+noteId+"'").executeUpdate();
+		Query query = currentSession.createQuery("update Note set isPinned=:isPinned where Id=:noteId");
 		query.setParameter("isPinned", isPinned);
 		query.setParameter("noteId", noteId);
 		query.executeUpdate();

@@ -26,14 +26,14 @@ public class LabelServiceImpl implements LabelService {
 	private UserRepository userRepository;
 
 	@Override
-public void createNoteLabel(LabelDto labelDto, String token, Integer noteId) {
+	public void createNoteLabel(LabelDto labelDto, String token, Integer noteId) {
 		Label label = modelMapper.map(labelDto, Label.class);
 		Integer id = Util.parseToken(token);
 		if (userRepository.isValidUser(id)) {
-			List<Note> note = notetRepository.getNotebyNoteId(noteId);
-			Note notes = note.get(0);
-			notes.addLabel(label);
-			labelRepository.saveNoteLabels(notes);
+			Note note = notetRepository.getNotebyNoteId(noteId);
+			// Note notes = note.get(0);
+			note.addLabel(label);
+			labelRepository.saveNoteLabels(note);
 		}
 	}
 
@@ -46,13 +46,24 @@ public void createNoteLabel(LabelDto labelDto, String token, Integer noteId) {
 		}
 	}
 
+	public void addExistingLabelOnNote(Integer labelId, Integer noteId, String token) {
+		Integer id = Util.parseToken(token);
+		Note note = notetRepository.getNotebyNoteId(noteId);
+		System.out.println(note);
+		Label label = (Label) labelRepository.getLabelByLabelId(labelId);
+		System.out.println(label);
+		note.addLabel(label);
+		// label.addNote(note);
+		labelRepository.saveNoteLabels(note);
+	}
+
 	@Override
 	public void updateLabel(LabelDto labelDto, String token, Integer labelId) {
 		Label label = modelMapper.map(labelDto, Label.class);
 		Integer id = Util.parseToken(token);
 		if (userRepository.isValidUser(id)) {
-			List<Label> getLabel = labelRepository.getLabelByLabelId(labelId);
-			getLabel.get(0).setLabelName(label.getLabelName());
+			Label getLabel = labelRepository.getLabelByLabelId(labelId);
+			getLabel.setLabelName(label.getLabelName());
 			labelRepository.saveLabel(label);
 		}
 	}
@@ -62,12 +73,11 @@ public void createNoteLabel(LabelDto labelDto, String token, Integer noteId) {
 		Label label = modelMapper.map(labelDto, Label.class);
 		Integer id = Util.parseToken(token);
 		if (userRepository.isValidUser(id)) {
-			List<Note> getNote = notetRepository.getNotebyNoteId(noteId);
-			Note note = getNote.get(0);
+			Note note = notetRepository.getNotebyNoteId(noteId);
+			// Note note = getNote.get(0);
 			note.addLabel(label);
 			labelRepository.saveNoteLabels(note);
 		}
-
 	}
 
 	@Override
@@ -79,12 +89,11 @@ public void createNoteLabel(LabelDto labelDto, String token, Integer noteId) {
 	}
 
 	@Override
-	public List<Label> getLabels(String token) {
+	public List<Label> getAllLabels(String token) {
 		Integer id = Util.parseToken(token);
 		if (userRepository.isValidUser(id)) {
 			return labelRepository.getLabel(id);
 		}
 		return null;
-
 	}
 }

@@ -2,7 +2,6 @@ package com.bridgelabz.fundo.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -44,7 +43,7 @@ public class UserServiceImpl implements UserService {
 		MimeMessage message = emailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(message, true);
 		helper.setTo(emailId);
-		helper.setSubject("hello");
+		helper.setSubject("verify");
 		helper.setText(url + generatedToken);
 
 		emailSender.send(message);
@@ -60,10 +59,11 @@ public class UserServiceImpl implements UserService {
 		Integer id = userdaoimpl.getId(loginUser.getEmail());
 		if(id!=0) {
 		List<UserDetailsForRegistration> result = userdaoimpl.checkUser(id);
-		if(!bcryptPasswordEncoder.matches(loginUser.getPassword(), result.get(0).getPassword()))
+		if(bcryptPasswordEncoder.matches(loginUser.getPassword(), result.get(0).getPassword()))
+			System.out.println("hello");
+		else
 		throw new UserNotFoundException("invalid credientials");
 		}
-		
 	}
 
 	@Override
@@ -94,6 +94,10 @@ public class UserServiceImpl implements UserService {
 
 	}
 
+	public List<UserDetailsForRegistration> getUserbyId(Integer id)
+	{
+		return userdaoimpl.getUserbyId(id);
+	}
 	@Override
 	public List<UserDto> retriveUserFromDatabase() {
 		List<UserDto> users = new ArrayList<UserDto>();
@@ -122,7 +126,7 @@ public class UserServiceImpl implements UserService {
 		UserDetailsForRegistration userRegistrationDetails = modelmapper.map(userDetails,
 				UserDetailsForRegistration.class);
 		userRegistrationDetails.setPassword(hashPassword(password));
-		String url = "http://localhost:8080/api/verify/";
+		String url = "http://localhost:8080/user/verify/";
 		if (userdaoimpl.setToDatabase(userRegistrationDetails) > 0) {
 			String generatedToken = token.generateToken(userdaoimpl.getId(userDetails.getEmail()));
 			sendEmail(url, generatedToken, userDetails.getEmail());
@@ -139,5 +143,4 @@ public class UserServiceImpl implements UserService {
 		passwordReset.setPassword(encodePassword);
 		return userdaoimpl.updatePassword(Id, modelmapper.map(passwordReset, UserDetailsForRegistration.class));
 	}
-
 }

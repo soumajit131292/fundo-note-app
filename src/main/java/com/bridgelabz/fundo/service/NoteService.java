@@ -3,11 +3,13 @@ package com.bridgelabz.fundo.service;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import com.bridgelabz.fundo.dto.NoteDto;
 import com.bridgelabz.fundo.exception.ErrorResponse;
 import com.bridgelabz.fundo.model.Note;
 
+@Service
 public interface NoteService {
 
 	public void updateNote(NoteDto note, String token, Integer noteId);

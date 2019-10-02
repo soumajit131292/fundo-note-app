@@ -31,4 +31,6 @@ public interface UserService {
 
 	void sendEmail(String url, String generatedToken, String emailId) throws MessagingException;
 
+	public List<UserDetailsForRegistration> getUserbyId(Integer id);
+
 }

@@ -8,7 +8,7 @@ import com.bridgelabz.fundo.model.UserDetailsForRegistration;
 public interface NoteRepository {
 	void saveNote(UserDetailsForRegistration note);
 
-	List<Note> getNotebyNoteId(Integer noteId);
+	Note getNotebyNoteId(Integer noteId);
 
 	void updateNote(Integer noteId, Note createdNoteByUser);
 

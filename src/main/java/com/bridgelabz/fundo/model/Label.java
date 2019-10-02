@@ -15,6 +15,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 @Data
@@ -32,6 +34,7 @@ public class Label {
 	@ManyToMany(fetch = FetchType.LAZY, cascade= {CascadeType.PERSIST, CascadeType.MERGE,
 			 CascadeType.DETACH, CascadeType.REFRESH})
 	@JoinTable(name="label_note", joinColumns= {@JoinColumn(name="label_id")},inverseJoinColumns= {@JoinColumn(name="note_id")})
+	@JsonIgnore
 	private List<Note> notes;
 
 	public void addNote(Note theNote) {
@@ -40,5 +43,4 @@ public class Label {
 		}
 		notes.add(theNote);
 	}
-
 }
