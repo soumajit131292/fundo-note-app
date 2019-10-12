@@ -52,6 +52,6 @@ public class LabelRepositoryImpl implements LabelRepository {
 	@Override
 	public List<Label> getLabel(Integer id) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		return currentSession.createQuery("from Label where userId='"+id+"'").getResultList();
+		return currentSession.createQuery("from Label where userId='" + id + "'").getResultList();
 	}
 }

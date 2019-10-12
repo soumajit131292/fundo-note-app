@@ -1,5 +1,6 @@
 package com.bridgelabz.fundo.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -89,11 +90,17 @@ public class LabelServiceImpl implements LabelService {
 	}
 
 	@Override
-	public List<Label> getAllLabels(String token) {
+	public List<LabelDto> getAllLabels(String token) {
 		Integer id = Util.parseToken(token);
-		if (userRepository.isValidUser(id)) {
-			return labelRepository.getLabel(id);
+		userRepository.isValidUser(id);
+		List<Label> list = labelRepository.getLabel(id);
+		System.out.println("in outside for loop");
+		List<LabelDto> labels = new ArrayList<LabelDto>();
+		for (Label obj : list) {
+			LabelDto labelDto = modelMapper.map(obj, LabelDto.class);
+			labels.add(labelDto);
+			System.out.println("in repository");
 		}
-		return null;
+		return labels;
 	}
 }

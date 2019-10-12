@@ -45,24 +45,27 @@ public class UserServiceImpl implements UserService {
 		helper.setTo(emailId);
 		helper.setSubject("verify");
 		helper.setText(url + generatedToken);
-
 		emailSender.send(message);
 	}
 
 	@Override
 	public Integer findIdOfCurrentUser(String email) {
-		return userdaoimpl.getId(email);
+		UserDetailsForRegistration userDetails = userdaoimpl.getId(email);
+		if (userDetails == null) {
+			throw new UserNotFoundException("Invalid EmailId");
+		}
+		return userDetails.getId();
 	}
 
 	@Override
 	public void doLogin(LoginUser loginUser) {
-		Integer id = userdaoimpl.getId(loginUser.getEmail());
-		if(id!=0) {
-		List<UserDetailsForRegistration> result = userdaoimpl.checkUser(id);
-		if(bcryptPasswordEncoder.matches(loginUser.getPassword(), result.get(0).getPassword()))
-			System.out.println("hello");
-		else
-		throw new UserNotFoundException("invalid credientials");
+		Integer id = findIdOfCurrentUser(loginUser.getEmail());
+		if (id != 0) {
+			List<UserDetailsForRegistration> result = userdaoimpl.checkUser(id);
+			if (bcryptPasswordEncoder.matches(loginUser.getPassword(), result.get(0).getPassword()))
+				System.out.println("hello");
+			else
+				throw new UserNotFoundException("invalid credientials");
 		}
 	}
 
@@ -74,7 +77,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean forgotPassword(Integer id) throws MessagingException {
 		String generatedToken = token.generateToken(id);
-		String url = "";
+		String url = "http://localhost:4200/resetpasword/";
 		sendEmail(url, generatedToken, userdaoimpl.getUserById(id));
 		return true;
 	}
@@ -94,10 +97,10 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-	public List<UserDetailsForRegistration> getUserbyId(Integer id)
-	{
+	public List<UserDetailsForRegistration> getUserbyId(Integer id) {
 		return userdaoimpl.getUserbyId(id);
 	}
+
 	@Override
 	public List<UserDto> retriveUserFromDatabase() {
 		List<UserDto> users = new ArrayList<UserDto>();
@@ -113,7 +116,7 @@ public class UserServiceImpl implements UserService {
 	public void deleteFromDatabase(Integer id) {
 		if (!userdaoimpl.deletFromDatabase(id))
 			throw new UserNotFoundException("no data found");
-		
+
 	}
 
 	public void changeActiveStatus(Integer Id) {
@@ -128,7 +131,7 @@ public class UserServiceImpl implements UserService {
 		userRegistrationDetails.setPassword(hashPassword(password));
 		String url = "http://localhost:8080/user/verify/";
 		if (userdaoimpl.setToDatabase(userRegistrationDetails) > 0) {
-			String generatedToken = token.generateToken(userdaoimpl.getId(userDetails.getEmail()));
+			String generatedToken = token.generateToken(findIdOfCurrentUser(userDetails.getEmail()));
 			sendEmail(url, generatedToken, userDetails.getEmail());
 			return 1;
 		}

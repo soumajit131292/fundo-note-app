@@ -11,12 +11,14 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,6 +34,7 @@ import com.bridgelabz.fundo.util.Util;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin(allowedHeaders = "*", origins = "*", exposedHeaders = { "token" })
 public class UserRegistrationController implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -41,14 +44,15 @@ public class UserRegistrationController implements Serializable {
 	@Autowired
 	private UserService userService;
 
+	@SuppressWarnings("unused")
 	@Autowired
 	private RedisTemplate<String, UserDetailsForRegistration> redisTemplate;
 
-	/*public UserRegistrationController(RedisTemplate<String, UserDetailsForRegistration> redisTemplate) {
-		super();
-		this.redisTemplate = redisTemplate;
-		hashOperation = redisTemplate.opsForHash();
-	}*/
+	/*
+	 * public UserRegistrationController(RedisTemplate<String,
+	 * UserDetailsForRegistration> redisTemplate) { super(); this.redisTemplate =
+	 * redisTemplate; hashOperation = redisTemplate.opsForHash(); }
+	 */
 
 	@Autowired
 	private UserRepository userRepository;
@@ -70,16 +74,12 @@ public class UserRegistrationController implements Serializable {
 		else
 			throw new UserNotFoundException("no data found");
 	}
-
-	@PostMapping("/forgot-password/{id}")
-	public ResponseEntity<ErrorResponse> forgotPassword(@PathVariable("id") Integer Id,
-			@RequestBody ResetPassword userDetails) throws MessagingException {
-		if (userService.isUserPresent(Id)) {
-			userService.forgotPassword(Id);
-
+    
+	@PostMapping("/forgotpassword")
+	public ResponseEntity<ErrorResponse> forgotPassword(@RequestBody UserDto body) throws MessagingException {
+			Integer id=userService.findIdOfCurrentUser(body.getEmail());
+			userService.forgotPassword(id);
 			return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
-		} else
-			throw new UserNotFoundException("no data found");
 	}
 
 	@GetMapping("/verify/{token}")
@@ -94,6 +94,7 @@ public class UserRegistrationController implements Serializable {
 	@PostMapping("/login")
 	public ResponseEntity<ErrorResponse> login(@RequestBody LoginUser loginUser) {
 		userService.doLogin(loginUser);
+		System.out.println("login success");
 		Integer id = userService.findIdOfCurrentUser(loginUser.getEmail());
 		String JwtToken = Util.generateToken(id);
 		List<UserDetailsForRegistration> details = userService.getUserbyId(id);
@@ -110,10 +111,13 @@ public class UserRegistrationController implements Serializable {
 		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
 
 	}
+	
 
-	@PutMapping("/updateuser/{token}")
+	@PutMapping("/resetpassword/{token}")
 	public ResponseEntity<ErrorResponse> updateUser(@PathVariable("token") String token,
 			@RequestBody ResetPassword userDetails) {
+		System.out.println("hello");
+		System.out.println(userDetails.getPassword());
 		userService.updateUser(token, userDetails);
 		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
 	}

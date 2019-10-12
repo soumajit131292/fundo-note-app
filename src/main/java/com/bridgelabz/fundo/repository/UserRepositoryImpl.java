@@ -109,13 +109,12 @@ public class UserRepositoryImpl implements UserRepository {
 
 	}
 	@Transactional
-	public Integer getId(String email) {
+	public UserDetailsForRegistration getId(String email) {
 		Session currentSession = entityManager.unwrap(Session.class);
 	//	System.out.println(email.getEmail());
-		List<UserDetailsForRegistration> detailsList = currentSession
-				.createQuery("from UserDetailsForRegistration where email='" + email + "'")
-				.getResultList();
-		return detailsList.get(0).getId();
+		return (UserDetailsForRegistration) currentSession
+				.createQuery("from UserDetailsForRegistration where email='" + email + "'").uniqueResult();
+		//return detailsList.get(0).getId();
 
 	}
 @Override
