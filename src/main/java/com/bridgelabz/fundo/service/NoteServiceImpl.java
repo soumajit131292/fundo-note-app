@@ -1,6 +1,7 @@
 package com.bridgelabz.fundo.service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,22 +39,26 @@ public class NoteServiceImpl implements NoteService {
 
 	@Override
 	public void createANote(NoteDto note, String token) {
-		// System.out.println("hello");
-		// Integer id=Util.parseToken(token);
-//List<UserDetailsForRegistration> listOfUser = (List<UserDetailsForRegistration>) redisTemplate.opsForValue().get(token);
-		// Integer Id=Integer.parseInt(id);
-		System.out.println("hello man");
-		// System.out.println(email);
+		
+		Integer id=Util.parseToken(token);
+				System.out.println("hello man");
+		
 		Note createdNoteByUser = dtoToEntity(note);
 		Date date = new Date();
 		Timestamp timeStamp = new Timestamp(date.getTime());
 		createdNoteByUser.setCreatedOn(timeStamp);
-		// List<UserDetailsForRegistration> user = userDao.getUserbyId(id);
+//		createdNoteByUser.setArchive(false);
+//		createdNoteByUser.setInTrash(false);
+//		createdNoteByUser.setPinned(false);
+		createdNoteByUser.setArchive(false);
+		createdNoteByUser.setInTrash(false);
+		createdNoteByUser.setPinned(false);
+		 List<UserDetailsForRegistration> user = userDao.getUserbyId(id);
 		// UserDetailsForRegistration user = userDao.getUserByMail(email);
-		// UserDetailsForRegistration obj = user.get(0);
+		 UserDetailsForRegistration obj = user.get(0);
 		// System.out.println(createdNoteByUser);
-		// obj.addNote(createdNoteByUser);
-		// noteDao.saveNote(obj);
+		 obj.addNote(createdNoteByUser);
+		 noteDao.saveNote(obj);
 		// user.addNote(createdNoteByUser);
 		// noteDao.saveNote(user);
 	}
@@ -83,10 +88,18 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public List<Note> getAllNotes(String token) {
 		Integer id = Util.parseToken(token);
-		if (userService.isUserPresent(id)) {
-			return noteDao.getNotebyUserId(id);
-		}
-		return null;
+		List<Note> arrayOfNotes=new ArrayList<>();
+		return arrayOfNotes= noteDao.getNotebyUserId(id);
+//		List<NoteDto> arrayOfNoteDto=new ArrayList<>();
+//		if (userService.isUserPresent(id)) {
+//			 arrayOfNotes= noteDao.getNotebyUserId(id);
+//		}
+//		for(Note n : arrayOfNotes)
+//		{
+//			NoteDto dto=modelMapper.map(n,NoteDto.class);
+//			arrayOfNoteDto.add(dto);
+//		}
+//		return arrayOfNoteDto;
 	}
 
 	@Override
@@ -116,4 +129,56 @@ public class NoteServiceImpl implements NoteService {
 					.collect(Collectors.toList()).forEach(System.out::println);
 		}
 	}
+
+	@Override
+	public void doArchive(Integer noteId, String token) {
+		
+		Integer id = Util.parseToken(token);
+		if (userService.isUserPresent(id)) {
+			Note n=noteDao.getNotebyNoteId(noteId);
+			
+			if(n.isArchive()==true)
+			n.setArchive(false);
+			else
+				n.setArchive(true);
+			noteDao.updateNote(noteId, n);
+		}
+		
+		
+	}
+
+	@Override
+	public List<Note> getArchiveNote(String token) {
+		
+		Integer id = Util.parseToken(token);
+		
+		return noteDao.getArchiveNotebyUserId(id);
+	}
+
+	@Override
+	public void trash(Integer noteId, String token) {
+		Integer id = Util.parseToken(token);
+		if (userService.isUserPresent(id)) {
+			Note n=noteDao.getNotebyNoteId(noteId);
+			
+			if(n.isInTrash()==true)
+			n.setInTrash(false);
+			else
+				n.setInTrash(true);
+			noteDao.updateNote(noteId, n);
+		}
+		
+		
+	}
+
+	@Override
+	public List<Note> getTrasheNote(String token) {
+Integer id = Util.parseToken(token);
+		
+		return noteDao.getTrashNotebyUserId(id);
+	}
+
+	
+
+	
 }

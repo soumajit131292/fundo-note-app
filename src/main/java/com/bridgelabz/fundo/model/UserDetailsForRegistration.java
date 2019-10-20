@@ -14,11 +14,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 @Data
 @Entity
 @Table(name = "user_registration_details")
+
 public class UserDetailsForRegistration {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +42,7 @@ public class UserDetailsForRegistration {
 	private String activeStatus;
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
+	
 	private List<Note> note;
 
 	public void addNote(Note theReview) {

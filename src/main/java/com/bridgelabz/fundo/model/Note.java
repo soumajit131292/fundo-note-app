@@ -41,12 +41,14 @@ public class Note {
 	private boolean inTrash;
 	@Column(name = "isPinned")
 	private boolean isPinned;
+	@Column(name = "isArchive")
+	private boolean isArchive;
 	@Column(name = "remainder")
 	private LocalDateTime remainder;
+	@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY, cascade= {CascadeType.PERSIST, CascadeType.MERGE,
 			 CascadeType.DETACH, CascadeType.REFRESH})
 	@JoinTable(name = "label_note", joinColumns = {@JoinColumn(name = "note_id")}, inverseJoinColumns = { @JoinColumn(name = "label_id")})
-	@JsonIgnore
 	private List<Label> labels;
 
 	public void addLabel(Label theLabel) {

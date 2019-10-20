@@ -18,7 +18,7 @@ private JavaMailSender emailSender;
 	
 	public void message()
 	{
-		amqpTemplate.convertAndSend(message, messagePostProcessor);
+		//amqpTemplate.convertAndSend(message, messagePostProcessor);
 	}
 
 	

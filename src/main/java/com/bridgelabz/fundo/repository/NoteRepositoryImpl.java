@@ -28,6 +28,7 @@ public class NoteRepositoryImpl implements NoteRepository {
 	public void saveNote(UserDetailsForRegistration note) {
 		Session currentSession = entityManager.unwrap(Session.class);
 		currentSession.save(note);
+		System.out.println("note saved");
 	}
 
 	@Override
@@ -56,7 +57,7 @@ public class NoteRepositoryImpl implements NoteRepository {
 	@Transactional
 	public List<Note> getNotebyUserId(Integer id) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		return currentSession.createQuery("from Note where user_id='" + id + "'").getResultList();
+		return currentSession.createQuery("from Note where user_id='" + id + "'and inTrash='"+false+"'and isPinned='"+false+"'and isArchive='"+false+"'").getResultList();
 	}
 
 	@Override
@@ -69,5 +70,18 @@ public class NoteRepositoryImpl implements NoteRepository {
 		query.setParameter("isPinned", isPinned);
 		query.setParameter("noteId", noteId);
 		query.executeUpdate();
+	}
+
+	@Override
+	@Transactional
+	public List<Note> getArchiveNotebyUserId(Integer id) {
+		Session currentSession = entityManager.unwrap(Session.class);
+		return currentSession.createQuery("from Note where user_id='" + id + "'and isArchive=true").getResultList();
+	}
+
+	@Override
+	public List<Note> getTrashNotebyUserId(Integer id) {
+		Session currentSession = entityManager.unwrap(Session.class);
+		return currentSession.createQuery("from Note where user_id='" + id + "'and inTrash=true").getResultList();
 	}
 }

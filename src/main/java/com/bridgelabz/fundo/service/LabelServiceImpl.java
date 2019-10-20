@@ -90,17 +90,24 @@ public class LabelServiceImpl implements LabelService {
 	}
 
 	@Override
-	public List<LabelDto> getAllLabels(String token) {
+	public List<Label> getAllLabels(String token) {
 		Integer id = Util.parseToken(token);
 		userRepository.isValidUser(id);
 		List<Label> list = labelRepository.getLabel(id);
-		System.out.println("in outside for loop");
-		List<LabelDto> labels = new ArrayList<LabelDto>();
-		for (Label obj : list) {
-			LabelDto labelDto = modelMapper.map(obj, LabelDto.class);
-			labels.add(labelDto);
-			System.out.println("in repository");
-		}
-		return labels;
+		return list;
+//		System.out.println("in outside for loop");
+//		List<LabelDto> labels = new ArrayList<LabelDto>();
+//		for (Label obj : list) {
+//			LabelDto labelDto = modelMapper.map(obj, LabelDto.class);
+//			labels.add(labelDto);
+//			System.out.println("in repository");
+//		}
+//		return labels;
+	}
+
+	@Override
+	public void getId(Integer id) {
+		List<Integer> value=new ArrayList<Integer>();
+		labelRepository.getId(id);
 	}
 }

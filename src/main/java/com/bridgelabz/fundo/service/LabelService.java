@@ -17,8 +17,10 @@ public interface LabelService {
 
 	void deleteLabel(String token, Integer labelId);
 
-	List<LabelDto> getAllLabels(String token);
+	List<Label> getAllLabels(String token);
 
 	void addExistingLabelOnNote(Integer labelId, Integer noteId, String token);
+
+	void getId(Integer id);
 
 }

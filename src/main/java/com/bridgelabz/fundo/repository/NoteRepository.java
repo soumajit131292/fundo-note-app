@@ -18,4 +18,8 @@ public interface NoteRepository {
 
 	public void changePinStatus(Integer noteId, boolean status);
 
+	List<Note> getArchiveNotebyUserId(Integer id);
+
+	List<Note> getTrashNotebyUserId(Integer id);
+
 }

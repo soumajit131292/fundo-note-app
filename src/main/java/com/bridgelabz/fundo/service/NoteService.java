@@ -27,4 +27,17 @@ public interface NoteService {
 	public void sortByDateDescending(String token);
 
 	
+
+	public List<Note> getArchiveNote(String token);
+
+	public void doArchive(Integer noteId, String token);
+
+	public void trash(Integer noteId, String token);
+
+	public List<Note> getTrasheNote(String token);
+
+	
+
+	
+	
 }

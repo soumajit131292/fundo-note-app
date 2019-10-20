@@ -3,6 +3,9 @@ package com.bridgelabz.fundo.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,38 +18,45 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bridgelabz.fundo.dto.NoteDto;
+import com.bridgelabz.fundo.exception.ErrorResponse;
 import com.bridgelabz.fundo.model.Note;
 import com.bridgelabz.fundo.service.NoteService;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @RestController
 @RequestMapping("/notes")
+@CrossOrigin(allowedHeaders = "*", origins = "*", exposedHeaders = { "token" })
 public class NoteController {
 	@Autowired
 	private NoteService noteService;
 
-	@PutMapping("/createnote")
-	public void noteCreate(@RequestBody NoteDto note, @RequestHeader("token") String token) {
+	@PostMapping("/createnote")
+	public ResponseEntity<ErrorResponse> noteCreate(@RequestBody NoteDto note,@RequestHeader String token) {
+		System.out.println("hello");
 		noteService.createANote(note, token);
-
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
 	}
 
 	@PutMapping("/updatenote/{noteId}")
-	public void updateNote(@RequestBody NoteDto note, @RequestHeader("token") String token,
+	public ResponseEntity<ErrorResponse> updateNote(@RequestBody NoteDto note, @RequestHeader String token,
 			@PathVariable("noteId") Integer noteId) {
 		noteService.updateNote(note, token, noteId);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/deletenote/{noteId}")
-	public void deleteNote(@RequestHeader("token") String token, @PathVariable("noteId") Integer noteId) {
+	public ResponseEntity<ErrorResponse> deleteNote(@PathVariable("noteId") Integer noteId,@RequestHeader("token") String token) {
 		noteService.deleteNote(token, noteId);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
 	}
-
-	@GetMapping("/getnotes")
-	public List<Note> getNotes(@RequestHeader("token") String token) {
+	
+	@GetMapping("/getnotes/{token}")
+	public List<Note> getNotes(@PathVariable("token") String token) {
+		System.out.println("in controller");
 		return noteService.getAllNotes(token);
 	}
 
-	@PostMapping("/changePin/{noteId}")
+	@PutMapping("/changePin/{noteId}")
 	public void changePin(@RequestBody NoteDto note, @RequestHeader("token") String token,
 			@PathVariable("noteId") Integer noteId, @RequestParam boolean status) {
 		noteService.changePin(token, noteId, note, status);
@@ -61,4 +71,30 @@ public class NoteController {
 	public void sortByDateAscending(@RequestHeader("token") String token) {
 		noteService.sortByDateAscending(token);
 	}
+	
+	@PutMapping("/archive/{noteId}")
+	public ResponseEntity<ErrorResponse> doArchive(@PathVariable("noteId") Integer noteId,@RequestHeader("token") String token )
+	{
+		noteService.doArchive(noteId,token);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
+	}
+	@GetMapping("/getarchivenotes")
+	public List<Note> getArchiveNote(@RequestHeader("token") String token )
+	{
+		return noteService.getArchiveNote(token);
+	}
+	@PutMapping("/trash/{noteId}")
+	public ResponseEntity<ErrorResponse> trash(@PathVariable("noteId") Integer noteId,@RequestHeader("token") String token )
+	{
+		noteService.trash(noteId,token);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
+	}
+	
+	@GetMapping("/getrashnotes")
+	public List<Note> getTrashNote(@RequestHeader("token") String token )
+	{
+		return noteService.getTrasheNote(token);
+		
+	}
+	
 }

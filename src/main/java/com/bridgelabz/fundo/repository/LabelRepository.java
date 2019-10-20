@@ -17,4 +17,6 @@ public interface LabelRepository {
 
 	List<Label> getLabel(Integer id);
 
+	void getId(Integer id);
+
 }

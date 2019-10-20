@@ -46,12 +46,20 @@ public class LabelRepositoryImpl implements LabelRepository {
 	@Transactional
 	public void deleteLabel(Integer labelId) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		currentSession.createQuery("delete from Note where id='" + labelId + "'").executeUpdate();
+		currentSession.createQuery("delete from Label where id='" + labelId + "'").executeUpdate();
+		System.out.println("deleted");
 	}
 
 	@Override
 	public List<Label> getLabel(Integer id) {
 		Session currentSession = entityManager.unwrap(Session.class);
 		return currentSession.createQuery("from Label where userId='" + id + "'").getResultList();
+	}
+
+	@Override
+	public void getId(Integer id) {
+		Session currentSession=entityManager.unwrap(Session.class);
+		List<Integer> list=	currentSession.createQuery("from label_note where label_id='"+id+"' ").getResultList();
+				System.out.println(list);
 	}
 }
