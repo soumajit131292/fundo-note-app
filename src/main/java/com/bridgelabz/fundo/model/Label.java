@@ -31,7 +31,7 @@ public class Label {
 	private String labelName;
 	@Column(name="user_id")
 	private Integer userId;
-	@JsonIgnore
+@JsonIgnore
 	@ManyToMany(fetch = FetchType.LAZY, cascade= {CascadeType.PERSIST, CascadeType.MERGE,
 			 CascadeType.DETACH, CascadeType.REFRESH})
 	@JoinTable(name="label_note", joinColumns= {@JoinColumn(name="label_id")},inverseJoinColumns= {@JoinColumn(name="note_id")})

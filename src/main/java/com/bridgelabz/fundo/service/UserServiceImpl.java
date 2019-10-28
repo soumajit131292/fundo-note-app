@@ -50,11 +50,15 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Integer findIdOfCurrentUser(String email) {
-		UserDetailsForRegistration userDetails = userdaoimpl.getId(email);
-		if (userDetails == null) {
-			throw new UserNotFoundException("Invalid EmailId");
+	
+		List<UserDetailsForRegistration> userDetails = userdaoimpl.getId(email);
+		
+		if (userDetails.size()>0) {
+			return userDetails.get(0).getId();		
 		}
-		return userDetails.getId();
+		else
+		throw new UserNotFoundException("user is not valid");
+		
 	}
 
 	@Override
@@ -76,9 +80,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean forgotPassword(Integer id) throws MessagingException {
+		
 		String generatedToken = token.generateToken(id);
-		String url = "http://localhost:4200/resetpasword/";
+		String url = "http://localhost:3000/resetpassword/";
 		sendEmail(url, generatedToken, userdaoimpl.getUserById(id));
+		
 		return true;
 	}
 
@@ -129,12 +135,13 @@ public class UserServiceImpl implements UserService {
 		UserDetailsForRegistration userRegistrationDetails = modelmapper.map(userDetails,
 				UserDetailsForRegistration.class);
 		userRegistrationDetails.setPassword(hashPassword(password));
-		String url = "http://localhost:8080/user/verify/";
+		String url = "http://localhost:3000/verify/";
 		if (userdaoimpl.setToDatabase(userRegistrationDetails) > 0) {
 			String generatedToken = token.generateToken(findIdOfCurrentUser(userDetails.getEmail()));
 			sendEmail(url, generatedToken, userDetails.getEmail());
 			return 1;
 		}
+		System.out.println("after checking everything now returning to main");
 		return 0;
 	}
 

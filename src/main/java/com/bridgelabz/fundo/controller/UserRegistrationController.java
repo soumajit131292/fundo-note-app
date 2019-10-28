@@ -72,17 +72,20 @@ public class UserRegistrationController implements Serializable {
 		if (userService.saveToDatabase(userDetails) > 0)
 			return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
 		else
-			throw new UserNotFoundException("no data found");
+			throw new UserNotFoundException("already registered");
 	}
     
 	@PostMapping("/forgotpassword")
 	public ResponseEntity<ErrorResponse> forgotPassword(@RequestBody UserDto body) throws MessagingException {
+	
+		System.out.println("in forgot controller");
 			Integer id=userService.findIdOfCurrentUser(body.getEmail());
+			System.out.println("id");
 			userService.forgotPassword(id);
 			return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
 	}
 
-	@GetMapping("/verify/{token}")
+	@PutMapping("/verify/{token}")
 	public ResponseEntity<ErrorResponse> verifyUserByMail(@PathVariable("token") String token) {
 		if (userService.verifyUser(token)) {
 			return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bridgelabz.fundo.dto.LabelDto;
 import com.bridgelabz.fundo.exception.ErrorResponse;
 import com.bridgelabz.fundo.model.Label;
+import com.bridgelabz.fundo.model.Note;
 import com.bridgelabz.fundo.service.LabelService;
 
 @RestController
@@ -63,14 +64,17 @@ public class LabelController {
 	}
 	@PutMapping("/update/{labelId}/{noteId}")
 	public ResponseEntity<ErrorResponse> addExistingLabelLabelOnNote(@PathVariable Integer labelId,@PathVariable Integer noteId, @RequestHeader String token) {
+		System.out.println("done in add label api");
 		labelService.addExistingLabelOnNote(labelId,noteId,token);
+		
 		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
 	}
 	@GetMapping("/notebylabelid/{id}")
-	public void get(@PathVariable Integer id)
+	public List<Note> getNotesByLabelId(@PathVariable Integer id)
 	{
-	   labelService.getId(id);	
+	  return labelService.getNotesByLabelId(id);	
 	}
+	
 }
 
 

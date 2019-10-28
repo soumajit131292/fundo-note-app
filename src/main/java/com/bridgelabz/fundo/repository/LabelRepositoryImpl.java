@@ -1,5 +1,6 @@
 package com.bridgelabz.fundo.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -39,7 +40,7 @@ public class LabelRepositoryImpl implements LabelRepository {
 	@Transactional
 	public Label getLabelByLabelId(Integer labelId) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		return (Label) currentSession.createQuery("from Label where id='" + labelId + "'").uniqueResult();
+		return (Label) currentSession.createQuery("from Label where id='" + labelId + "'").getSingleResult();
 	}
 
 	@Override
@@ -51,15 +52,37 @@ public class LabelRepositoryImpl implements LabelRepository {
 	}
 
 	@Override
+	@Transactional
 	public List<Label> getLabel(Integer id) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		return currentSession.createQuery("from Label where userId='" + id + "'").getResultList();
+
+		List<Label> noteDetails = currentSession.createQuery("from Label where userId='" + id + "'").getResultList();
+		System.out.println("here i'm");
+		return noteDetails;
 	}
 
 	@Override
 	public void getId(Integer id) {
-		Session currentSession=entityManager.unwrap(Session.class);
-		List<Integer> list=	currentSession.createQuery("from label_note where label_id='"+id+"' ").getResultList();
-				System.out.println(list);
+		Session currentSession = entityManager.unwrap(Session.class);
+		List<Integer> list = currentSession.createQuery("from label_note where label_id='" + id + "' ").getResultList();
+		System.out.println(list);
+	}
+
+	@Override
+	@Transactional
+	public List<Note> getNoteByLabelId(Integer id) {
+		Session currentSession = entityManager.unwrap(Session.class);
+
+		List<Label> noteDetails = currentSession.createQuery("from Label where id='" + id + "'").getResultList();
+		int size=noteDetails.size();
+		List<Note> notes=noteDetails.get(0).getNotes();
+//		List<Note> notes=new ArrayList<Note>();
+//		for(int i=0;i<size;i++) {
+//			Note note=(Note) noteDetails.get(i).getNotes();
+//			notes.add(note);
+//		System.out.println(noteDetails.get(0).getNotes());
+//		}
+		return notes;
+
 	}
 }

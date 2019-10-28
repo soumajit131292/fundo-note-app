@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.bridgelabz.fundo.dto.LabelDto;
 import com.bridgelabz.fundo.model.Label;
+import com.bridgelabz.fundo.model.Note;
 
 public interface LabelService {
 
@@ -21,6 +22,8 @@ public interface LabelService {
 
 	void addExistingLabelOnNote(Integer labelId, Integer noteId, String token);
 
-	void getId(Integer id);
+	
+	
+	List<Note> getNotesByLabelId(Integer id);
 
 }

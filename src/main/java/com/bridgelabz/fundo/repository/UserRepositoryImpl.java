@@ -82,13 +82,15 @@ public class UserRepositoryImpl implements UserRepository {
 	@Transactional
 	public int setToDatabase(UserDetailsForRegistration userDetails) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		if (!isValidUser(userDetails.getId())) {
+		
+		if (getUserByMailId(userDetails.getEmail())) {
 			currentSession.save(userDetails);
 			return 1;
 		}
 		return 0;
 	}
 
+	
 	@Transactional
 	public int updatePassword(Integer Id, UserDetailsForRegistration userDetails) {
 		Session currentSession = entityManager.unwrap(Session.class);
@@ -109,11 +111,11 @@ public class UserRepositoryImpl implements UserRepository {
 
 	}
 	@Transactional
-	public UserDetailsForRegistration getId(String email) {
+	public List<UserDetailsForRegistration> getId(String email) {
 		Session currentSession = entityManager.unwrap(Session.class);
 	//	System.out.println(email.getEmail());
-		return (UserDetailsForRegistration) currentSession
-				.createQuery("from UserDetailsForRegistration where email='" + email + "'").uniqueResult();
+		return  currentSession
+				.createQuery("from UserDetailsForRegistration where email='" + email + "'").getResultList();
 		//return detailsList.get(0).getId();
 
 	}
@@ -124,6 +126,20 @@ public class UserRepositoryImpl implements UserRepository {
 		List<UserDetailsForRegistration> oneUser = currentSession
 				.createQuery("from UserDetailsForRegistration where id='" + id + "'").getResultList();
 		return oneUser;
+	}
+
+public boolean getUserByMailId(String email)
+{
+	Session currentSession = entityManager.unwrap(Session.class);
+	System.out.println(email);
+	List<UserDetailsForRegistration> user=currentSession.createQuery("from UserDetailsForRegistration where email='"+email+"'").getResultList();
+	System.out.println(user);
+	if(user.size()>0) {
+		System.out.println("email checed now returning");
+		return false;
+	}
+	return true;
+	
 	}
 @Override
 @Transactional

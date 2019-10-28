@@ -21,6 +21,9 @@ import com.bridgelabz.fundo.util.Util;
 @Service
 public class NoteServiceImpl implements NoteService {
 
+	/*{  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJJZCI6MX0.dL6z9dPcxpXnrQgKN_3b8yRKVuaNGMC2-0o9W3SMY7oPGTizuoKkPp2MHJbCQ3Uv5S4IDfDpmhHbodVRU_mh5g  }*/
+	
+	
 	@Autowired
 	private ModelMapper modelMapper;
 	@Autowired
@@ -29,7 +32,8 @@ public class NoteServiceImpl implements NoteService {
 	private UserRepository userDao;
 	@Autowired
 	private UserService userService;
-
+@Autowired
+private ElasticService elasticSearchService;
 	@Autowired
 	private RedisTemplate<String, UserDetailsForRegistration> redisTemplate;
 
@@ -59,6 +63,7 @@ public class NoteServiceImpl implements NoteService {
 		// System.out.println(createdNoteByUser);
 		 obj.addNote(createdNoteByUser);
 		 noteDao.saveNote(obj);
+		 elasticSearchService.save(createdNoteByUser);
 		// user.addNote(createdNoteByUser);
 		// noteDao.saveNote(user);
 	}
@@ -74,6 +79,8 @@ public class NoteServiceImpl implements NoteService {
 			createdNote.setTitle(note.getTitle());
 			createdNote.setUpdatedOn(timeStamp);
 			noteDao.updateNote(noteId, createdNote);
+			elasticSearchService.update(createdNote);
+			System.out.println("note inserted");
 		}
 	}
 
