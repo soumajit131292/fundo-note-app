@@ -36,6 +36,8 @@ public interface NoteService {
 
 	public List<Note> getTrasheNote(String token);
 
+	List<Note> searchNotes(String token, String keyword, String field);
+
 	
 
 	

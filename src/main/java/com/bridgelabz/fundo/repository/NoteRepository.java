@@ -22,4 +22,6 @@ public interface NoteRepository {
 
 	List<Note> getTrashNotebyUserId(Integer id);
 
+	List<Integer> findNoteIdByUserId(Integer userId);
+
 }

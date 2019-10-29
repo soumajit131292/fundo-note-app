@@ -1,4 +1,5 @@
 package com.bridgelabz.fundo.service;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
+
 @Service
 @Slf4j
 public class ElasticServiceImpl implements ElasticService {
@@ -41,6 +43,7 @@ public class ElasticServiceImpl implements ElasticService {
 	private static final String index = "notes";
 
 	private static final String type = "notes_data";
+
 	@Override
 	public void save(Note note) {
 		try {
@@ -49,17 +52,18 @@ public class ElasticServiceImpl implements ElasticService {
 			IndexResponse response = client.index(request, RequestOptions.DEFAULT);
 			log.info(response.status().toString());
 		} catch (IOException e) {
-			throw new UserNotFoundException("Invalid EmailId");
+			throw new UserNotFoundException("Invalid");
 		}
 	}
-//	curl -XGET 'http://localhost:9200/notes/notes_data/pretty=true'
+
+//	curl -XGET 'http://localhost:9200/notes_search/pretty=true' 
 	@Override
 	public void update(Note note) {
-		UpdateRequest request = new UpdateRequest(index, type, note.getId()+"");
+		UpdateRequest request = new UpdateRequest(index, type, note.getId() + "");
 		Map<String, String> noteMap = mapper.convertValue(note, Map.class);
 		request.doc(noteMap);
 		try {
-			UpdateResponse response=client.update(request, RequestOptions.DEFAULT);
+			UpdateResponse response = client.update(request, RequestOptions.DEFAULT);
 			log.info(response.status().toString());
 		} catch (IOException e) {
 			throw new UserNotFoundException("Invalid EmailId");
@@ -68,45 +72,46 @@ public class ElasticServiceImpl implements ElasticService {
 
 	@Override
 	public void delete(String noteId) {
-		DeleteRequest request=new DeleteRequest(index, type, noteId);
+		DeleteRequest request = new DeleteRequest(index, type, noteId);
 		try {
-			DeleteResponse response=client.delete(request, RequestOptions.DEFAULT);
+			DeleteResponse response = client.delete(request, RequestOptions.DEFAULT);
 			log.info(response.toString());
 		} catch (IOException e) {
 			new UserNotFoundException("Invalid EmailId");
 		}
 	}
 
+	@Override
+	public List<Note> search(String search, String field) {
+		SearchSourceBuilder builder = new SearchSourceBuilder();
+		builder.query(QueryBuilders.termQuery(field, search));
+		SearchRequest request = new SearchRequest("notes");
+		request.source(builder);
+		MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder(field, search);
+		matchQueryBuilder.fuzziness(Fuzziness.AUTO);
+		matchQueryBuilder.prefixLength(3);
+		matchQueryBuilder.maxExpansions(10);
+		builder.query(matchQueryBuilder);
+		List<Note> notes = new ArrayList<Note>();
 
-		
-		@Override
-		public List<Note> search(String search, String field) {
-			SearchSourceBuilder builder=new SearchSourceBuilder();
-			builder.query(QueryBuilders.termQuery(field, search));
-			SearchRequest request=new SearchRequest("notes");
-			request.source(builder);
-			MatchQueryBuilder matchQueryBuilder=new MatchQueryBuilder(field, search);
-			matchQueryBuilder.fuzziness(Fuzziness.AUTO); 
-			matchQueryBuilder.prefixLength(3); 
-			matchQueryBuilder.maxExpansions(10);
-			builder.query(matchQueryBuilder);
-			List<Note> notes= new ArrayList<Note>();
-			try {
-				SearchResponse searchResponse = client.search(request, RequestOptions.DEFAULT);
-				searchResponse.getHits().spliterator().forEachRemaining(note-> {
-					try {
-						notes.add(mapper.readValue(note.getSourceAsString(), Note.class));
-					} catch (JsonParseException|JsonMappingException e) {
-						throw new UserNotFoundException(e.getMessage());
-					} catch (IOException e) {
-						throw new UserNotFoundException(e.getMessage());
-					}
-				});
-			} catch (IOException e) {
-				throw new UserNotFoundException(e.getMessage());
-			}
-			return notes;
+		try {
+
+			SearchResponse searchResponse = client.search(request, RequestOptions.DEFAULT);
+
+			searchResponse.getHits().spliterator().forEachRemaining(note -> {
+				try {
+					notes.add(mapper.readValue(note.getSourceAsString(), Note.class));
+				} catch (JsonParseException | JsonMappingException e) {
+					throw new UserNotFoundException(e.getMessage());
+				} catch (IOException e) {
+					throw new UserNotFoundException(e.getMessage());
+				}
+			});
+		} catch (IOException e) {
+			throw new UserNotFoundException(e.getMessage());
 		}
-
+		System.out.println(notes);
+		return notes;
+	}
 
 }

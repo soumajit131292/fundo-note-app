@@ -1,5 +1,6 @@
 package com.bridgelabz.fundo.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -80,8 +81,24 @@ public class NoteRepositoryImpl implements NoteRepository {
 	}
 
 	@Override
+	@Transactional
 	public List<Note> getTrashNotebyUserId(Integer id) {
 		Session currentSession = entityManager.unwrap(Session.class);
 		return currentSession.createQuery("from Note where user_id='" + id + "'and inTrash=true").getResultList();
+	}
+
+	@Override
+	@Transactional
+	public List<Integer> findNoteIdByUserId(Integer userId) {
+		Session currentSession = entityManager.unwrap(Session.class);
+		List<Integer> noteIds=new ArrayList<>();	
+		List<Note> notes=currentSession.createQuery("from Note where user_id='" + userId + "'and inTrash=true").getResultList();
+		for(Note obj : notes)
+		{
+			noteIds.add(obj.getId());
+		}
+		
+		
+		return noteIds;
 	}
 }

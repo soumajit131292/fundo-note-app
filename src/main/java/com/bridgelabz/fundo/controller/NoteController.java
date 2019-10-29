@@ -97,4 +97,13 @@ public class NoteController {
 		
 	}
 	
+	@GetMapping("/searchnotes/{keyword}/{field}")
+	public List<Note> searchNotes(@RequestHeader("token") String token,@PathVariable("keyword") String keyword,@PathVariable("field") String field  )
+	{
+		System.out.println("hello");
+		return noteService.searchNotes(token,keyword,field);
+		
+	}
+
+	
 }

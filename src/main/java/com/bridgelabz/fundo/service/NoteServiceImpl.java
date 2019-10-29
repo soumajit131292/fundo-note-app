@@ -184,6 +184,20 @@ Integer id = Util.parseToken(token);
 		
 		return noteDao.getTrashNotebyUserId(id);
 	}
+	@Override
+	public List<Note> searchNotes(String token, String keyword, String field) {
+		Integer userId= Util.parseToken(token);
+		
+		List<Integer> noteIds=noteDao.findNoteIdByUserId(userId);
+		
+		if(noteIds.size()>0) {
+			System.out.println("in searchNotes of note service");
+			return elasticSearchService.search(keyword, field);
+			
+		}
+		return null;
+		
+	}
 
 	
 
