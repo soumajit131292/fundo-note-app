@@ -50,7 +50,7 @@ public class ColabRepository {
 	@Transactional
 	public void removeColab(Integer userId, Integer noteId) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		currentSession.createQuery("delete from Colaborator where note_id='" + noteId + "'and userId='" + userId + "'")
+		currentSession.createQuery("delete from Colaborator where note_id='" + noteId + "'and user_id='" + userId + "'")
 				.executeUpdate();
 	}
 
@@ -95,6 +95,14 @@ public class ColabRepository {
 		}
 		return true;
 
+	}
+	
+	@Transactional
+	public List<Colaborator> getColabList(Integer userId)
+	{
+		Session currentSession=entityManager.unwrap(Session.class);
+		return currentSession.createQuery("from Colaborator where user_id='"+userId+"'").getResultList();
+		
 	}
 
 }

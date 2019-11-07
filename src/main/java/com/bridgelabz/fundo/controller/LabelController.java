@@ -43,7 +43,6 @@ public class LabelController {
 		labelService.createLabel(labelDto, token);
 		System.out.println("in label controller after finishing visit");
 		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
-
 	}
 	@PutMapping("/updatebylabelid/{labelId}")
 	public ResponseEntity<ErrorResponse> updateLabel( @PathVariable Integer labelId,@RequestBody LabelDto labelDto,@RequestHeader String token ) {

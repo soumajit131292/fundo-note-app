@@ -24,4 +24,6 @@ public interface NoteRepository {
 
 	List<Integer> findNoteIdByUserId(Integer userId);
 
+	Note getNoteByColabId(Integer colab);
+
 }

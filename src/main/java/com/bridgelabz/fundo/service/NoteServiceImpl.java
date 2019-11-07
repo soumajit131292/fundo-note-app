@@ -12,8 +12,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.bridgelabz.fundo.dto.NoteDto;
+import com.bridgelabz.fundo.model.Colaborator;
 import com.bridgelabz.fundo.model.Note;
 import com.bridgelabz.fundo.model.UserDetailsForRegistration;
+import com.bridgelabz.fundo.repository.ColabRepository;
 import com.bridgelabz.fundo.repository.NoteRepository;
 import com.bridgelabz.fundo.repository.UserRepository;
 import com.bridgelabz.fundo.util.Util;
@@ -44,6 +46,8 @@ public class NoteServiceImpl implements NoteService {
 	private RedisTemplate<String, UserDetailsForRegistration> redisTemplate;
 	@Autowired
 	private ColabServiceImpl colabService;
+	@Autowired
+	private ColabRepository colabRepository;
 
 	public Note dtoToEntity(NoteDto note) {
 		return modelMapper.map(note, Note.class);
@@ -102,8 +106,17 @@ public class NoteServiceImpl implements NoteService {
 		Integer id = Util.parseToken(token);
 		List<Note> arrayOfNotes = new ArrayList<>();
 		arrayOfNotes = noteDao.getNotebyUserId(id);
-		List<String> listOfColabNotes = colabService.getNotes(id);
-		System.out.println(listOfColabNotes);
+		List<Integer> colabId=new ArrayList<>();
+		List<Colaborator> colabData=colabRepository.getColabList(id);
+		for(Colaborator c : colabData) {
+			colabId.add(c.getColabId());
+		}
+		List<Note> arrayOfColabNotes=new ArrayList<>();
+		for(Integer colab : colabId ) {
+			
+			arrayOfNotes.add(noteDao.getNoteByColabId(colab));
+		}
+		
 //		List<Note> listOfColabNotes = colabService.getNotes(id);
 //		if (listOfColabNotes.size() > 0) {
 //			for (Note n : listOfColabNotes) {

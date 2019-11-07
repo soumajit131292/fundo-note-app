@@ -103,4 +103,14 @@ public class NoteRepositoryImpl implements NoteRepository {
 		
 		return noteIds;
 	}
+
+	@Override
+	@Transactional
+	public Note getNoteByColabId(Integer colabId) {
+		Session currentSession = entityManager.unwrap(Session.class);
+		Note notes=(Note) currentSession.createQuery("from Note where colab_id='" + colabId + "'").uniqueResult();
+		
+		
+		return notes;
+	}
 }
