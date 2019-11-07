@@ -124,4 +124,13 @@ public class UserRegistrationController implements Serializable {
 		userService.updateUser(token, userDetails);
 		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
 	}
+	@GetMapping("/loggedinuser")
+	public UserDetailsForRegistration getUser(@RequestHeader("token") String token)
+	{
+		return  userService.getUser(token);
+		
+	}
 }
+
+
+

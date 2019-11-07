@@ -20,10 +20,16 @@ import com.bridgelabz.fundo.util.Util;
 
 @Service
 public class NoteServiceImpl implements NoteService {
-
-	/*{  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJJZCI6MX0.dL6z9dPcxpXnrQgKN_3b8yRKVuaNGMC2-0o9W3SMY7oPGTizuoKkPp2MHJbCQ3Uv5S4IDfDpmhHbodVRU_mh5g  }*/
-	
-	
+	/*
+	 * parag:
+	 * eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJJZCI6M30.Q-uA_a-lyKpuLvkvlv8Eb0h4ja1-
+	 * Z0SCejPvRqtHbkzwTRLzf1LTW-8fFXzjHpNYI6JtjM19MRIm49sWawu1dg
+	 */
+	/*
+	 * eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJJZCI6MX0.
+	 * dL6z9dPcxpXnrQgKN_3b8yRKVuaNGMC2-
+	 * 0o9W3SMY7oPGTizuoKkPp2MHJbCQ3Uv5S4IDfDpmhHbodVRU_mh5g
+	 */
 	@Autowired
 	private ModelMapper modelMapper;
 	@Autowired
@@ -32,10 +38,12 @@ public class NoteServiceImpl implements NoteService {
 	private UserRepository userDao;
 	@Autowired
 	private UserService userService;
-@Autowired
-private ElasticService elasticSearchService;
+	@Autowired
+	private ElasticService elasticSearchService;
 	@Autowired
 	private RedisTemplate<String, UserDetailsForRegistration> redisTemplate;
+	@Autowired
+	private ColabServiceImpl colabService;
 
 	public Note dtoToEntity(NoteDto note) {
 		return modelMapper.map(note, Note.class);
@@ -43,29 +51,26 @@ private ElasticService elasticSearchService;
 
 	@Override
 	public void createANote(NoteDto note, String token) {
-		
-		Integer id=Util.parseToken(token);
-				System.out.println("hello man");
-		
+
+		Integer id = Util.parseToken(token);
+		System.out.println("hello man");
+
 		Note createdNoteByUser = dtoToEntity(note);
 		Date date = new Date();
 		Timestamp timeStamp = new Timestamp(date.getTime());
 		createdNoteByUser.setCreatedOn(timeStamp);
-//		createdNoteByUser.setArchive(false);
-//		createdNoteByUser.setInTrash(false);
-//		createdNoteByUser.setPinned(false);
+
 		createdNoteByUser.setArchive(false);
 		createdNoteByUser.setInTrash(false);
 		createdNoteByUser.setPinned(false);
-		 List<UserDetailsForRegistration> user = userDao.getUserbyId(id);
-		// UserDetailsForRegistration user = userDao.getUserByMail(email);
-		 UserDetailsForRegistration obj = user.get(0);
-		// System.out.println(createdNoteByUser);
-		 obj.addNote(createdNoteByUser);
-		 noteDao.saveNote(obj);
-		 elasticSearchService.save(createdNoteByUser);
-		// user.addNote(createdNoteByUser);
-		// noteDao.saveNote(user);
+		List<UserDetailsForRegistration> user = userDao.getUserbyId(id);
+
+		UserDetailsForRegistration obj = user.get(0);
+
+		obj.addNote(createdNoteByUser);
+		noteDao.saveNote(obj);
+		elasticSearchService.save(createdNoteByUser);
+
 	}
 
 	@Override
@@ -95,18 +100,17 @@ private ElasticService elasticSearchService;
 	@Override
 	public List<Note> getAllNotes(String token) {
 		Integer id = Util.parseToken(token);
-		List<Note> arrayOfNotes=new ArrayList<>();
-		return arrayOfNotes= noteDao.getNotebyUserId(id);
-//		List<NoteDto> arrayOfNoteDto=new ArrayList<>();
-//		if (userService.isUserPresent(id)) {
-//			 arrayOfNotes= noteDao.getNotebyUserId(id);
+		List<Note> arrayOfNotes = new ArrayList<>();
+		arrayOfNotes = noteDao.getNotebyUserId(id);
+		List<String> listOfColabNotes = colabService.getNotes(id);
+		System.out.println(listOfColabNotes);
+//		List<Note> listOfColabNotes = colabService.getNotes(id);
+//		if (listOfColabNotes.size() > 0) {
+//			for (Note n : listOfColabNotes) {
+//				arrayOfNotes.add(n);
+//			}
 //		}
-//		for(Note n : arrayOfNotes)
-//		{
-//			NoteDto dto=modelMapper.map(n,NoteDto.class);
-//			arrayOfNoteDto.add(dto);
-//		}
-//		return arrayOfNoteDto;
+		return arrayOfNotes;
 	}
 
 	@Override
@@ -139,26 +143,25 @@ private ElasticService elasticSearchService;
 
 	@Override
 	public void doArchive(Integer noteId, String token) {
-		
+
 		Integer id = Util.parseToken(token);
 		if (userService.isUserPresent(id)) {
-			Note n=noteDao.getNotebyNoteId(noteId);
-			
-			if(n.isArchive()==true)
-			n.setArchive(false);
+			Note n = noteDao.getNotebyNoteId(noteId);
+
+			if (n.isArchive() == true)
+				n.setArchive(false);
 			else
 				n.setArchive(true);
 			noteDao.updateNote(noteId, n);
 		}
-		
-		
+
 	}
 
 	@Override
 	public List<Note> getArchiveNote(String token) {
-		
+
 		Integer id = Util.parseToken(token);
-		
+
 		return noteDao.getArchiveNotebyUserId(id);
 	}
 
@@ -166,40 +169,37 @@ private ElasticService elasticSearchService;
 	public void trash(Integer noteId, String token) {
 		Integer id = Util.parseToken(token);
 		if (userService.isUserPresent(id)) {
-			Note n=noteDao.getNotebyNoteId(noteId);
-			
-			if(n.isInTrash()==true)
-			n.setInTrash(false);
+			Note n = noteDao.getNotebyNoteId(noteId);
+
+			if (n.isInTrash() == true)
+				n.setInTrash(false);
 			else
 				n.setInTrash(true);
 			noteDao.updateNote(noteId, n);
 		}
-		
-		
+
 	}
 
 	@Override
 	public List<Note> getTrasheNote(String token) {
-Integer id = Util.parseToken(token);
-		
+		Integer id = Util.parseToken(token);
+
 		return noteDao.getTrashNotebyUserId(id);
 	}
+
 	@Override
 	public List<Note> searchNotes(String token, String keyword, String field) {
-		Integer userId= Util.parseToken(token);
-		
-		List<Integer> noteIds=noteDao.findNoteIdByUserId(userId);
-		
-		if(noteIds.size()>0) {
+		Integer userId = Util.parseToken(token);
+
+		List<Integer> noteIds = noteDao.findNoteIdByUserId(userId);
+
+		if (noteIds.size() > 0) {
 			System.out.println("in searchNotes of note service");
 			return elasticSearchService.search(keyword, field);
-			
+
 		}
 		return null;
-		
+
 	}
 
-	
-
-	
 }

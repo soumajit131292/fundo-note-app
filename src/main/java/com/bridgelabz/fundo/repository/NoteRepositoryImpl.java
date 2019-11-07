@@ -31,6 +31,8 @@ public class NoteRepositoryImpl implements NoteRepository {
 		currentSession.save(note);
 		System.out.println("note saved");
 	}
+	
+	
 
 	@Override
 	@Transactional

@@ -63,12 +63,15 @@ public class LabelServiceImpl implements LabelService {
 
 	@Override
 	public void updateLabel(LabelDto labelDto, String token, Integer labelId) {
-		Label label = modelMapper.map(labelDto, Label.class);
+		
 		Integer id = Util.parseToken(token);
+		
 		if (userRepository.isValidUser(id)) {
+		
 			Label getLabel = labelRepository.getLabelByLabelId(labelId);
-			getLabel.setLabelName(label.getLabelName());
-			labelRepository.saveLabel(label);
+			
+			getLabel.setLabelName(labelDto.getLabelName());
+			labelRepository.saveLabel(getLabel);
 		}
 	}
 

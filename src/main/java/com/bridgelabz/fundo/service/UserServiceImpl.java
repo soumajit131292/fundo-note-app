@@ -153,4 +153,13 @@ public class UserServiceImpl implements UserService {
 		passwordReset.setPassword(encodePassword);
 		return userdaoimpl.updatePassword(Id, modelmapper.map(passwordReset, UserDetailsForRegistration.class));
 	}
+
+	@Override
+	public UserDetailsForRegistration getUser(String userToken) {
+		Integer Id = token.parseToken(userToken);
+		return  userdaoimpl.getLoggedInUser(Id);
+		
+		
+		
+	}
 }

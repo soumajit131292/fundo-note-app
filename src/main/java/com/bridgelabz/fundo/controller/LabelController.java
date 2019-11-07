@@ -57,7 +57,7 @@ public class LabelController {
 		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
 	}
 	@GetMapping("/getlabels/{token}")
-	public List<Label> getAllLabel(@PathVariable("token") String token)
+	public List<Label> getAllLabel(@PathVariable String token)
 	{
 		System.out.println("in label controller");
 		return labelService.getAllLabels(token);
@@ -75,8 +75,4 @@ public class LabelController {
 	  return labelService.getNotesByLabelId(id);	
 	}
 	
-}
-
-
-
-
+}	

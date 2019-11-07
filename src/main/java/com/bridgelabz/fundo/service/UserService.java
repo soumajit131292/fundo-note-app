@@ -33,4 +33,6 @@ public interface UserService {
 
 	public List<UserDetailsForRegistration> getUserbyId(Integer id);
 
+	public UserDetailsForRegistration getUser(String token);
+
 }

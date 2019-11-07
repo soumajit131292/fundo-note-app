@@ -162,4 +162,13 @@ public UserDetailsForRegistration getUserByMail(String email)
 		}
 		return result;
 	}
+	@Transactional
+	public UserDetailsForRegistration getLoggedInUser(Integer id) {
+		Session currentSession = entityManager.unwrap(Session.class);
+		UserDetailsForRegistration user=(UserDetailsForRegistration) currentSession.createQuery(
+				"from UserDetailsForRegistration where  id='" + id + "'")
+				.uniqueResult();
+		return user;
+		
+	}
 }

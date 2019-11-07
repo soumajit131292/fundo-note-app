@@ -29,12 +29,13 @@ public class Label {
 	private Integer id;
 	@Column(name = "labelname")
 	private String labelName;
-	@Column(name="user_id")
+	@Column(name = "user_id")
 	private Integer userId;
-@JsonIgnore
-	@ManyToMany(fetch = FetchType.LAZY, cascade= {CascadeType.PERSIST, CascadeType.MERGE,
-			 CascadeType.DETACH, CascadeType.REFRESH})
-	@JoinTable(name="label_note", joinColumns= {@JoinColumn(name="label_id")},inverseJoinColumns= {@JoinColumn(name="note_id")})
+	@JsonIgnore
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	@JoinTable(name = "label_note", joinColumns = { @JoinColumn(name = "label_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "note_id") })
 	private List<Note> notes;
 
 	public void addNote(Note theNote) {
@@ -42,5 +43,5 @@ public class Label {
 			notes = new ArrayList<>();
 		}
 		notes.add(theNote);
-}
+	}
 }

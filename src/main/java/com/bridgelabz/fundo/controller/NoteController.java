@@ -30,16 +30,17 @@ public class NoteController {
 	@Autowired
 	private NoteService noteService;
 
-	@PostMapping("/createnote")
-	public ResponseEntity<ErrorResponse> noteCreate(@RequestBody NoteDto note,@RequestHeader String token) {
+	@PostMapping("/createnote/{token}")
+	public ResponseEntity<ErrorResponse> noteCreate(@RequestBody NoteDto note,@PathVariable("token") String token) {
 		System.out.println("hello");
 		noteService.createANote(note, token);
 		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
 	}
 
 	@PutMapping("/updatenote/{noteId}")
-	public ResponseEntity<ErrorResponse> updateNote(@RequestBody NoteDto note, @RequestHeader String token,
-			@PathVariable("noteId") Integer noteId) {
+	public ResponseEntity<ErrorResponse> updateNote(@PathVariable("noteId") Integer noteId,@RequestHeader("token") String token,@RequestBody NoteDto note
+			) {
+		System.out.println("in update method");
 		noteService.updateNote(note, token, noteId);
 		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
 	}
@@ -85,7 +86,7 @@ public class NoteController {
 	}
 	@PutMapping("/trash/{noteId}")
 	public ResponseEntity<ErrorResponse> trash(@PathVariable("noteId") Integer noteId,@RequestHeader("token") String token )
-	{
+	{System.out.println("in trash");
 		noteService.trash(noteId,token);
 		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
 	}
@@ -94,7 +95,6 @@ public class NoteController {
 	public List<Note> getTrashNote(@RequestHeader("token") String token )
 	{
 		return noteService.getTrasheNote(token);
-		
 	}
 	
 	@GetMapping("/searchnotes/{keyword}/{field}")
@@ -102,8 +102,5 @@ public class NoteController {
 	{
 		System.out.println("hello");
 		return noteService.searchNotes(token,keyword,field);
-		
 	}
-
-	
 }
