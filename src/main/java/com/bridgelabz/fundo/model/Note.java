@@ -46,20 +46,25 @@ public class Note {
 	private boolean isArchive;
 	@Column(name = "remainder")
 	private LocalDateTime remainder;
-	@JsonIgnore
-	@ManyToMany(fetch = FetchType.LAZY, cascade= {CascadeType.PERSIST, CascadeType.MERGE,
-			 CascadeType.DETACH, CascadeType.REFRESH})
-	@JoinTable(name = "label_note", joinColumns = {@JoinColumn(name = "note_id")}, inverseJoinColumns = { @JoinColumn(name = "label_id")})
+
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	@JoinTable(name = "label_note", joinColumns = { @JoinColumn(name = "note_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "label_id") })
+	
 	private List<Label> labels;
 
+	
 	public void addLabel(Label theLabel) {
 		if (labels == null) {
 			labels = new ArrayList<>();
 		}
 		labels.add(theLabel);
 	}
+
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "note_id")
+	
 	private List<Colaborator> colab;
 
 	public void addCollaborator(Colaborator theReview) {
@@ -68,6 +73,5 @@ public class Note {
 		}
 		colab.add(theReview);
 	}
-	
-	
+
 }

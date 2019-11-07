@@ -70,6 +70,16 @@ public class UserRepositoryImpl implements UserRepository {
 	}
 
 	@Transactional
+	public UserDetailsForRegistration getUser(Integer userId) {
+		Session currentSession = entityManager.unwrap(Session.class);
+
+		UserDetailsForRegistration user=(UserDetailsForRegistration) currentSession.createQuery("from UserDetailsForRegistration where id='"+userId +"'").uniqueResult();
+			return user;	
+	}
+	
+	
+	
+	@Transactional
 	public void changeStatus(Integer Id) {
 		Session currentSession = entityManager.unwrap(Session.class);
 		String status = "true";

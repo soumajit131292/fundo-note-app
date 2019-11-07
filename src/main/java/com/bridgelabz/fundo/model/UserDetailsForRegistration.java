@@ -51,4 +51,14 @@ public class UserDetailsForRegistration {
 		}
 		note.add(theReview);
 	}
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "user_id")
+	private List<Colaborator> colab;
+
+	public void addCollaborator(Colaborator theReview) {
+		if (colab == null) {
+			colab = new ArrayList<>();
+		}
+		colab.add(theReview);
+	}
 }

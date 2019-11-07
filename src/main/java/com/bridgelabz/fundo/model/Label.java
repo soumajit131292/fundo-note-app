@@ -36,6 +36,7 @@ public class Label {
 			CascadeType.REFRESH })
 	@JoinTable(name = "label_note", joinColumns = { @JoinColumn(name = "label_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "note_id") })
+	
 	private List<Note> notes;
 
 	public void addNote(Note theNote) {

@@ -42,6 +42,12 @@ public class ColabRepository {
 	}
 
 	@Transactional
+	public void addColabNote(UserDetailsForRegistration colab) {
+		Session currentSession = entityManager.unwrap(Session.class);
+		currentSession.save(colab);
+	}
+
+	@Transactional
 	public void removeColab(Integer userId, Integer noteId) {
 		Session currentSession = entityManager.unwrap(Session.class);
 		currentSession.createQuery("delete from Colaborator where note_id='" + noteId + "'and userId='" + userId + "'")
@@ -52,22 +58,18 @@ public class ColabRepository {
 	public List<String> getColabUsers(Integer userId) {
 		Session currentSession = entityManager.unwrap(Session.class);
 		System.out.println("before fetching colab table");
-		List<String> list=new ArrayList<>();
-		List<Colaborator> notesFromColab=new ArrayList<>();
+		List<String> list = new ArrayList<>();
+		List<Colaborator> notesFromColab = new ArrayList<>();
 		List<Note> notes = currentSession.createQuery("from Note where user_id='" + userId + "'").getResultList();
-		for(Note n : notes )
-		{
+		for (Note n : notes) {
 			notesFromColab = currentSession.createQuery("from Colaborator where note_id='" + n.getId() + "'")
 					.getResultList();
 		}
-		for(Colaborator c : notesFromColab)
-		{
+		for (Colaborator c : notesFromColab) {
 			list.add(c.getUserEmailId());
 		}
 		System.out.println("after fetching colab table");
-		
-		
-		
+
 //		for (Colaborator col : notesFromColab) {
 //			System.out.println(col.getNoteId());
 //			Note n = (Note) currentSession.createQuery("from Note where id='" + col.getNoteId() + "'").uniqueResult();
@@ -83,7 +85,7 @@ public class ColabRepository {
 		Session currentSession = entityManager.unwrap(Session.class);
 		System.out.println("brfore query");
 		Colaborator colaborator = (Colaborator) currentSession
-				.createQuery("from Colaborator where note_id='" + noteId + "'and userId='" + userId + "'")
+				.createQuery("from Colaborator where note_id='" + noteId + "'and user_id='" + userId + "'")
 				.uniqueResult();
 		System.out.println("after query");
 
