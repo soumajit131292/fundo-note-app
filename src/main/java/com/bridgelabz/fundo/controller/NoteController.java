@@ -1,8 +1,10 @@
 package com.bridgelabz.fundo.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,7 +23,6 @@ import com.bridgelabz.fundo.dto.NoteDto;
 import com.bridgelabz.fundo.exception.ErrorResponse;
 import com.bridgelabz.fundo.model.Note;
 import com.bridgelabz.fundo.service.NoteService;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @RestController
 @RequestMapping("/notes")
@@ -103,4 +104,28 @@ public class NoteController {
 		System.out.println("hello");
 		return noteService.searchNotes(token,keyword,field);
 	}
+	// eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJJZCI6MX0.dL6z9dPcxpXnrQgKN_3b8yRKVuaNGMC2-0o9W3SMY7oPGTizuoKkPp2MHJbCQ3Uv5S4IDfDpmhHbodVRU_mh5g
+	@PostMapping("/remainder")
+	public ResponseEntity<ErrorResponse> setRemainder(@RequestHeader String token,@RequestParam(value="datetime") @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME) LocalDateTime datetime,@RequestParam(value="noteId") Integer noteId){
+		System.out.println("in remainder");
+		noteService.setRemainder(token,datetime,noteId);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
+		
+	}
+	@PutMapping("/updateremainder/{noteId}")
+	public ResponseEntity<ErrorResponse> updateRemainder(@RequestHeader String token,@RequestParam("datetime") @DateTimeFormat(iso=DateTimeFormat.ISO.DATE_TIME)LocalDateTime remainder,@PathVariable("noteId") Integer noteId){
+		noteService.setRemainder(token,remainder,noteId);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
+		
+	}
+	@DeleteMapping("/deleteremainder/{noteId}")
+	public ResponseEntity<ErrorResponse> deleteRemainder(@RequestHeader String token,@PathVariable("noteId") Integer noteId){
+		noteService.deleteRemainder(token,noteId);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
+		
+	}
 }
+
+
+
+

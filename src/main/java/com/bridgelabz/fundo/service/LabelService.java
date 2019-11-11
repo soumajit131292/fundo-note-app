@@ -14,7 +14,7 @@ public interface LabelService {
 
 	void createLabel(LabelDto labelDto, String token);
 
-	void addNoteLabel(LabelDto labelDto, String token, Integer noteId);
+	
 
 	void deleteLabel(String token, Integer labelId);
 
@@ -24,6 +24,10 @@ public interface LabelService {
 
 	
 	
-	List<Note> getNotesByLabelId(Integer id);
+	List<Note> getNotesByLabelId(String  labelName);
+
+	void removeLabel(Integer labelId, Integer noteId);
+
+	void addNoteLabel(String labelDto, Integer noteId, String token);
 
 }

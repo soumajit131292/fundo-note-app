@@ -15,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -61,17 +60,29 @@ public class Note {
 		}
 		labels.add(theLabel);
 	}
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "note_id")
-	
-	private List<Colaborator> colab;
-
-	public void addCollaborator(Colaborator theReview) {
-		if (colab == null) {
-			colab = new ArrayList<>();
+	public void removLabel(Label theLabel) {
+		if (labels == null) {
+			labels = new ArrayList<>();
 		}
-		colab.add(theReview);
+		labels.remove(theLabel);
 	}
+
+
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	@JoinTable(name = "colab_note", joinColumns = { @JoinColumn(name = "note_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "user_id") })
+	@JsonIgnore
+	private List<UserDetailsForRegistration> colabsUser;
+
+	public void addColab(UserDetailsForRegistration theNote) {
+		if (colabsUser == null) {
+			colabsUser = new ArrayList<>();
+		}
+		colabsUser.add(theNote);
+	}
+	
+	
+
 
 }

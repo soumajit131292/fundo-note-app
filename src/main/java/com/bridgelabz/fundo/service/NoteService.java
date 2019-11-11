@@ -1,5 +1,6 @@
 package com.bridgelabz.fundo.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -26,8 +27,6 @@ public interface NoteService {
 
 	public void sortByDateDescending(String token);
 
-	
-
 	public List<Note> getArchiveNote(String token);
 
 	public void doArchive(Integer noteId, String token);
@@ -37,6 +36,12 @@ public interface NoteService {
 	public List<Note> getTrasheNote(String token);
 
 	List<Note> searchNotes(String token, String keyword, String field);
+
+	public void setRemainder(String token,LocalDateTime remainder,Integer noteId);
+
+	public void deleteRemainder(String token, Integer noteId);
+
+	
 
 	
 

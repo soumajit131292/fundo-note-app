@@ -11,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -42,7 +44,7 @@ public class UserDetailsForRegistration {
 	private String activeStatus;
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
-	
+
 	private List<Note> note;
 
 	public void addNote(Note theReview) {
@@ -51,14 +53,19 @@ public class UserDetailsForRegistration {
 		}
 		note.add(theReview);
 	}
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "user_id")
-	private List<Colaborator> colab;
 
-	public void addCollaborator(Colaborator theReview) {
-		if (colab == null) {
-			colab = new ArrayList<>();
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,
+			CascadeType.REFRESH })
+	@JoinTable(name = "colab_note", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "note_id") })
+	@JsonIgnore
+	private List<Note> colabsNote;
+
+	public void addColab(Note theNote) {
+		if (colabsNote == null) {
+			colabsNote = new ArrayList<>();
 		}
-		colab.add(theReview);
+		colabsNote.add(theNote);
 	}
+
 }

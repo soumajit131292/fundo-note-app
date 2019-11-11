@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bridgelabz.fundo.dto.LabelDto;
+import com.bridgelabz.fundo.exception.UserNotFoundException;
 import com.bridgelabz.fundo.model.Label;
 import com.bridgelabz.fundo.model.Note;
 import com.bridgelabz.fundo.repository.LabelRepository;
@@ -49,39 +50,38 @@ public class LabelServiceImpl implements LabelService {
 
 	public void addExistingLabelOnNote(Integer labelId, Integer noteId, String token) {
 		Integer id = Util.parseToken(token);
-		Note note = (Note)notetRepository.getNotebyNoteId(noteId);
-		//System.out.println("after fetching note");
-	//	System.out.println(note.getDescription());
-		Label label =  labelRepository.getLabelByLabelId(labelId);
-		System.out.println(label);
+		Note note = notetRepository.getNotebyNoteId(noteId);
+
+		
+
+		Label label = labelRepository.getLabelByLabelId(labelId);
+
 		note.addLabel(label);
-		System.out.println("in label service");
-		System.out.println("after adding label");
-		// label.addNote(note);
+		
 		labelRepository.saveNoteLabels(note);
 	}
 
 	@Override
 	public void updateLabel(LabelDto labelDto, String token, Integer labelId) {
-		
+
 		Integer id = Util.parseToken(token);
-		
+
 		if (userRepository.isValidUser(id)) {
-		
+
 			Label getLabel = labelRepository.getLabelByLabelId(labelId);
-			
+
 			getLabel.setLabelName(labelDto.getLabelName());
 			labelRepository.saveLabel(getLabel);
 		}
 	}
 
 	@Override
-	public void addNoteLabel(LabelDto labelDto, String token, Integer noteId) {
+	public void addNoteLabel(String labelDto, Integer noteId, String token) {
 		Label label = modelMapper.map(labelDto, Label.class);
 		Integer id = Util.parseToken(token);
 		if (userRepository.isValidUser(id)) {
 			Note note = notetRepository.getNotebyNoteId(noteId);
-			// Note note = getNote.get(0);
+			
 			note.addLabel(label);
 			labelRepository.saveNoteLabels(note);
 		}
@@ -100,36 +100,23 @@ public class LabelServiceImpl implements LabelService {
 		Integer id = Util.parseToken(token);
 		userRepository.isValidUser(id);
 		return labelRepository.getLabel(id);
-		//		System.out.println("in outside for loop");
-//		List<LabelDto> labels = new ArrayList<LabelDto>();
-//		for (Label obj : list) {
-//			LabelDto labelDto = modelMapper.map(obj, LabelDto.class);
-//			labels.add(labelDto);
-//			System.out.println("in repository");
-//		}
-//		return labels;
-	}
-	
-//	@Override
-//	public List<Note> getNotesByLabelId(String token) {
-//		Integer id = Util.parseToken(token);
-//		userRepository.isValidUser(id);
-//		return labelRepository.getNoteByLabelId(id);
-//		//		System.out.println("in outside for loop");
-////		List<LabelDto> labels = new ArrayList<LabelDto>();
-////		for (Label obj : list) {
-////			LabelDto labelDto = modelMapper.map(obj, LabelDto.class);
-////			labels.add(labelDto);
-////			System.out.println("in repository");
-////		}
-////		return labels;
-//	}
 
-	
+	}
+
+
+
 	@Override
-	public List<Note> getNotesByLabelId(Integer id) {
-		//Integer id = Util.parseToken(token);
-		userRepository.isValidUser(id);
-		return labelRepository.getNoteByLabelId(id);
+	public List<Note> getNotesByLabelId(String labelName) {
+		
+		return labelRepository.getNoteByLabelId(labelName);
+	}
+
+	@Override
+	public void removeLabel(Integer labelId, Integer noteId) {
+		Note note = notetRepository.getNotebyNoteId(noteId);
+		Label label = labelRepository.getLabelByLabelId(labelId);
+		note.removLabel(label);
+		labelRepository.saveNoteLabels(note);
+
 	}
 }

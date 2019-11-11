@@ -34,10 +34,7 @@ public class LabelController {
 	public void createNoteLabel(@RequestBody LabelDto labelDto, @PathVariable Integer noteId, @RequestParam String token) {
 		labelService.createNoteLabel(labelDto, token, noteId);
 	}
-	@PutMapping("/updatebynoteid/{noteId}")
-	public void addNoteLabel(@RequestBody LabelDto labelDto, @PathVariable Integer noteId, @RequestParam String token) {
-		labelService.addNoteLabel(labelDto, token, noteId);
-	}
+	
 	@PostMapping("/createlabel")
 	public ResponseEntity<ErrorResponse> createLabel(@RequestHeader String token,@RequestBody LabelDto labelDto) {
 		labelService.createLabel(labelDto, token);
@@ -65,13 +62,18 @@ public class LabelController {
 	public ResponseEntity<ErrorResponse> addExistingLabelLabelOnNote(@PathVariable Integer labelId,@PathVariable Integer noteId, @RequestHeader String token) {
 		System.out.println("done in add label api");
 		labelService.addExistingLabelOnNote(labelId,noteId,token);
-		
+		System.out.println("OKAY");
 		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
 	}
-	@GetMapping("/notebylabelid/{id}")
-	public List<Note> getNotesByLabelId(@PathVariable Integer id)
+	@GetMapping("/notebylabelid/{labelName}")
+	public List<Note> getNotesByLabelName(@PathVariable String labelName)
 	{
-	  return labelService.getNotesByLabelId(id);	
+	  return labelService.getNotesByLabelId(labelName);	
 	}
 	
-}	
+	@DeleteMapping("/deletelable/{labelId}/{noteId}")
+	public ResponseEntity<ErrorResponse> deleteLabelOnNote(@PathVariable Integer labelId,@PathVariable Integer noteId) {
+		labelService.removeLabel(labelId,noteId);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
+	}
+	}

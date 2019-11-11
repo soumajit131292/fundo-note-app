@@ -35,6 +35,7 @@ public class UserRepositoryImpl implements UserRepository {
 				.getResultList();
 		return users;
 	}
+
 	@Override
 	@Transactional
 	public boolean isValidUser(Integer Id) {
@@ -73,12 +74,11 @@ public class UserRepositoryImpl implements UserRepository {
 	public UserDetailsForRegistration getUser(Integer userId) {
 		Session currentSession = entityManager.unwrap(Session.class);
 
-		UserDetailsForRegistration user=(UserDetailsForRegistration) currentSession.createQuery("from UserDetailsForRegistration where id='"+userId +"'").uniqueResult();
-			return user;	
+		UserDetailsForRegistration user = (UserDetailsForRegistration) currentSession
+				.createQuery("from UserDetailsForRegistration where id='" + userId + "'").uniqueResult();
+		return user;
 	}
-	
-	
-	
+
 	@Transactional
 	public void changeStatus(Integer Id) {
 		Session currentSession = entityManager.unwrap(Session.class);
@@ -88,11 +88,18 @@ public class UserRepositoryImpl implements UserRepository {
 						"update UserDetailsForRegistration set activeStatus='" + status + "' where id='" + Id + "'")
 				.executeUpdate();
 	}
+@Override
+	@Transactional
+	public void saveToDatabase(UserDetailsForRegistration userDetails) {
+		Session currentSession = entityManager.unwrap(Session.class);
+
+		currentSession.save(userDetails);
+	}
 
 	@Transactional
 	public int setToDatabase(UserDetailsForRegistration userDetails) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		
+
 		if (getUserByMailId(userDetails.getEmail())) {
 			currentSession.save(userDetails);
 			return 1;
@@ -100,7 +107,6 @@ public class UserRepositoryImpl implements UserRepository {
 		return 0;
 	}
 
-	
 	@Transactional
 	public int updatePassword(Integer Id, UserDetailsForRegistration userDetails) {
 		Session currentSession = entityManager.unwrap(Session.class);
@@ -109,27 +115,27 @@ public class UserRepositoryImpl implements UserRepository {
 	}
 
 	@Transactional
-	public String getUserById(Integer id)
-	{
+	public String getUserById(Integer id) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		//System.out.println(loginUser.getEmail());
+		// System.out.println(loginUser.getEmail());
 		List<UserDetailsForRegistration> detailsList = currentSession
-				.createQuery("from UserDetailsForRegistration where Id='" + id + "'")
-				.getResultList();
+				.createQuery("from UserDetailsForRegistration where Id='" + id + "'").getResultList();
 		System.out.println(detailsList.get(0).getId());
 		return detailsList.get(0).getEmail();
 
 	}
+
 	@Transactional
 	public List<UserDetailsForRegistration> getId(String email) {
 		Session currentSession = entityManager.unwrap(Session.class);
-	//	System.out.println(email.getEmail());
-		return  currentSession
-				.createQuery("from UserDetailsForRegistration where email='" + email + "'").getResultList();
-		//return detailsList.get(0).getId();
+		// System.out.println(email.getEmail());
+		return currentSession.createQuery("from UserDetailsForRegistration where email='" + email + "'")
+				.getResultList();
+		// return detailsList.get(0).getId();
 
 	}
-@Override
+
+	@Override
 	@Transactional
 	public List<UserDetailsForRegistration> getUserbyId(Integer id) {
 		Session currentSession = entityManager.unwrap(Session.class);
@@ -138,28 +144,30 @@ public class UserRepositoryImpl implements UserRepository {
 		return oneUser;
 	}
 
-public boolean getUserByMailId(String email)
-{
-	Session currentSession = entityManager.unwrap(Session.class);
-	System.out.println(email);
-	List<UserDetailsForRegistration> user=currentSession.createQuery("from UserDetailsForRegistration where email='"+email+"'").getResultList();
-	System.out.println(user);
-	if(user.size()>0) {
-		System.out.println("email checed now returning");
-		return false;
+	public boolean getUserByMailId(String email) {
+		Session currentSession = entityManager.unwrap(Session.class);
+		System.out.println(email);
+		List<UserDetailsForRegistration> user = currentSession
+				.createQuery("from UserDetailsForRegistration where email='" + email + "'").getResultList();
+		System.out.println(user);
+		if (user.size() > 0) {
+			System.out.println("email checed now returning");
+			return false;
+		}
+		return true;
+
 	}
-	return true;
-	
+
+	@Override
+	@Transactional
+	public UserDetailsForRegistration getUserByMail(String email) {
+		Session currentSession = entityManager.unwrap(Session.class);
+		UserDetailsForRegistration user = (UserDetailsForRegistration) currentSession
+				.createQuery("from UserDetailsForRegistration where email='" + email + "'").uniqueResult();
+		return user;
+
 	}
-@Override
-@Transactional
-public UserDetailsForRegistration getUserByMail(String email)
-{
-	Session currentSession = entityManager.unwrap(Session.class);
-	UserDetailsForRegistration user= (UserDetailsForRegistration) currentSession.createQuery("from UserDetailsForRegistration where emailId='"+email+"'").uniqueResult();
-	return user;
-	
-	}
+
 	@Transactional
 	public List<UserDetailsForRegistration> checkUser(Integer Id) {
 		String activeStatus = "true";
@@ -172,13 +180,13 @@ public UserDetailsForRegistration getUserByMail(String email)
 		}
 		return result;
 	}
+
 	@Transactional
 	public UserDetailsForRegistration getLoggedInUser(Integer id) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		UserDetailsForRegistration user=(UserDetailsForRegistration) currentSession.createQuery(
-				"from UserDetailsForRegistration where  id='" + id + "'")
-				.uniqueResult();
+		UserDetailsForRegistration user = (UserDetailsForRegistration) currentSession
+				.createQuery("from UserDetailsForRegistration where  id='" + id + "'").uniqueResult();
 		return user;
-		
+
 	}
 }

@@ -32,14 +32,23 @@ public class NoteRepositoryImpl implements NoteRepository {
 		System.out.println("note saved");
 	}
 	
+	@Override
+	@Transactional
+	public void saveColab(Note colab) {
+		Session currentSession = entityManager.unwrap(Session.class);
+		currentSession.save(colab);
+		System.out.println("note saved");
+	}
 	
 
 	@Override
 	@Transactional
 	public Note getNotebyNoteId(Integer noteId) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		Note note = (Note) currentSession.createQuery("from Note where Id='" + noteId + "'").uniqueResult();
-		return note;
+		System.out.println("before query");
+		List<Note> notes=currentSession.createQuery("from Note where Id='" + noteId + "'").getResultList();
+		
+		return notes.get(0);
 	}
 
 	@Override
@@ -53,7 +62,7 @@ public class NoteRepositoryImpl implements NoteRepository {
 	@Transactional
 	public void deleteNote(Integer noteId) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		currentSession.createQuery("delete from Note where Id='" + noteId + "'").executeUpdate();
+		currentSession.createQuery("delete from Note where id='" + noteId + "'").executeUpdate();
 	}
 
 	@Override
@@ -113,4 +122,35 @@ public class NoteRepositoryImpl implements NoteRepository {
 		
 		return notes;
 	}
+	@Override
+	@Transactional
+	public void savenotewithRemainder(Note note) {
+		Session currentSession = entityManager.unwrap(Session.class);
+		currentSession.save(note);
+		System.out.println("note saved");
+	}
+
+	@Override
+	@Transactional
+	public List<Note> getNotesByEmailId(String emailId) {
+		Session currentSession = entityManager.unwrap(Session.class);
+		System.out.println("before note");
+		return currentSession.createQuery("from Note where email='" + emailId + "'and inTrash='"+false+"'and isPinned='"+false+"'and isArchive='"+false+"'").getResultList();
+
+	}
+
+//	@Override
+//	public void saveColab(ColabModel colab) {
+//		// TODO Auto-generated method stub
+//		
+//	}
+
+	@Override
+	@Transactional
+	public List<Note> getLabels(Integer id) {
+		Session currentSession = entityManager.unwrap(Session.class);
+		return currentSession.createQuery("from ColabModel where userId='" + id + "'").getResultList();
+	}
+
+	
 }

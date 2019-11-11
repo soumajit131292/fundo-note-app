@@ -12,4 +12,5 @@ public interface UserRepository {
 	public List<UserDetailsForRegistration> getUserbyId(Integer id);
 	boolean isValidUser(Integer Id);
 	public UserDetailsForRegistration getUserByMail(String email);
-}
+	public void saveToDatabase(UserDetailsForRegistration ownerUser);
+	}

@@ -1,6 +1,7 @@
 package com.bridgelabz.fundo.service;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -12,10 +13,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.bridgelabz.fundo.dto.NoteDto;
-import com.bridgelabz.fundo.model.Colaborator;
 import com.bridgelabz.fundo.model.Note;
 import com.bridgelabz.fundo.model.UserDetailsForRegistration;
-import com.bridgelabz.fundo.repository.ColabRepository;
 import com.bridgelabz.fundo.repository.NoteRepository;
 import com.bridgelabz.fundo.repository.UserRepository;
 import com.bridgelabz.fundo.util.Util;
@@ -33,6 +32,8 @@ public class NoteServiceImpl implements NoteService {
 	 * 0o9W3SMY7oPGTizuoKkPp2MHJbCQ3Uv5S4IDfDpmhHbodVRU_mh5g
 	 */
 	@Autowired
+	private ColabService colabService;
+	@Autowired
 	private ModelMapper modelMapper;
 	@Autowired
 	private NoteRepository noteDao;
@@ -44,10 +45,7 @@ public class NoteServiceImpl implements NoteService {
 	private ElasticService elasticSearchService;
 	@Autowired
 	private RedisTemplate<String, UserDetailsForRegistration> redisTemplate;
-	@Autowired
-	private ColabServiceImpl colabService;
-	@Autowired
-	private ColabRepository colabRepository;
+	
 
 	public Note dtoToEntity(NoteDto note) {
 		return modelMapper.map(note, Note.class);
@@ -73,7 +71,7 @@ public class NoteServiceImpl implements NoteService {
 
 		obj.addNote(createdNoteByUser);
 		noteDao.saveNote(obj);
-		elasticSearchService.save(createdNoteByUser);
+		//elasticSearchService.save(createdNoteByUser);
 
 	}
 
@@ -84,11 +82,12 @@ public class NoteServiceImpl implements NoteService {
 			Date date = new Date();
 			Timestamp timeStamp = new Timestamp(date.getTime());
 			Note createdNote = noteDao.getNotebyNoteId(noteId);
+			
 			createdNote.setDescription(note.getDescription());
 			createdNote.setTitle(note.getTitle());
 			createdNote.setUpdatedOn(timeStamp);
 			noteDao.updateNote(noteId, createdNote);
-			elasticSearchService.update(createdNote);
+			//elasticSearchService.update(createdNote);
 			System.out.println("note inserted");
 		}
 	}
@@ -106,23 +105,9 @@ public class NoteServiceImpl implements NoteService {
 		Integer id = Util.parseToken(token);
 		List<Note> arrayOfNotes = new ArrayList<>();
 		arrayOfNotes = noteDao.getNotebyUserId(id);
-		List<Integer> colabId=new ArrayList<>();
-		List<Colaborator> colabData=colabRepository.getColabList(id);
-		for(Colaborator c : colabData) {
-			colabId.add(c.getColabId());
-		}
-		List<Note> arrayOfColabNotes=new ArrayList<>();
-		for(Integer colab : colabId ) {
-			
-			arrayOfNotes.add(noteDao.getNoteByColabId(colab));
-		}
 		
-//		List<Note> listOfColabNotes = colabService.getNotes(id);
-//		if (listOfColabNotes.size() > 0) {
-//			for (Note n : listOfColabNotes) {
-//				arrayOfNotes.add(n);
-//			}
-//		}
+		List<Note> colabNotes=colabService.getCollaboratedNoteList(id);
+		arrayOfNotes.addAll(colabNotes);
 		return arrayOfNotes;
 	}
 
@@ -213,6 +198,30 @@ public class NoteServiceImpl implements NoteService {
 		}
 		return null;
 
+	}
+
+	@Override
+	public void setRemainder(String token,LocalDateTime remainder,Integer noteId) {
+		Integer userId = Util.parseToken(token);
+		if(userId>0)
+		{
+		Note note = noteDao.getNotebyNoteId(noteId);
+		note.setRemainder(remainder);
+		noteDao.savenotewithRemainder(note);
+		}
+		
+	}
+
+	@Override
+	public void deleteRemainder(String token, Integer noteId) {
+		Integer userId = Util.parseToken(token);
+		if(userId>0)
+		{
+		Note note = noteDao.getNotebyNoteId(noteId);
+		note.setRemainder(null);
+		noteDao.savenotewithRemainder(note);
+		}
+		
 	}
 
 }

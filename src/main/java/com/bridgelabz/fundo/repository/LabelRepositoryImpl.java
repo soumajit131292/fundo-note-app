@@ -39,8 +39,9 @@ public class LabelRepositoryImpl implements LabelRepository {
 	@Override
 	@Transactional
 	public Label getLabelByLabelId(Integer labelId) {
+		System.out.println(labelId);
 		Session currentSession = entityManager.unwrap(Session.class);
-		return (Label) currentSession.createQuery("from Label where id='" + labelId + "'").getSingleResult();
+		return (Label) currentSession.createQuery("from Label where id='" + labelId + "'").uniqueResult();
 	}
 
 	@Override
@@ -62,6 +63,7 @@ public class LabelRepositoryImpl implements LabelRepository {
 	}
 
 	@Override
+	@Transactional
 	public void getId(Integer id) {
 		Session currentSession = entityManager.unwrap(Session.class);
 		List<Integer> list = currentSession.createQuery("from label_note where label_id='" + id + "' ").getResultList();
@@ -70,10 +72,10 @@ public class LabelRepositoryImpl implements LabelRepository {
 
 	@Override
 	@Transactional
-	public List<Note> getNoteByLabelId(Integer id) {
+	public List<Note> getNoteByLabelId(String labelName) {
 		Session currentSession = entityManager.unwrap(Session.class);
 
-		List<Label> noteDetails = currentSession.createQuery("from Label where id='" + id + "'").getResultList();
+		List<Label> noteDetails = currentSession.createQuery("from Label where labelName='" + labelName + "'").getResultList();
 		int size=noteDetails.size();
 		List<Note> notes=noteDetails.get(0).getNotes();
 //		List<Note> notes=new ArrayList<Note>();
@@ -84,5 +86,12 @@ public class LabelRepositoryImpl implements LabelRepository {
 //		}
 		return notes;
 
+	}
+
+	@Override
+	public int removeLabel(Integer labelId,Integer noteId) {
+		Session currentSession = entityManager.unwrap(Session.class);
+	int status=currentSession.createQuery("delete from label_note where label_id='" + labelId + "'and note_id='"+noteId+"'").executeUpdate();
+	    return status;
 	}
 }

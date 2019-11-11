@@ -26,4 +26,15 @@ public interface NoteRepository {
 
 	Note getNoteByColabId(Integer colab);
 
+	void savenotewithRemainder(Note note);
+
+	List<Note> getNotesByEmailId(String emailId);
+
+	
+	
+
+	void saveColab(Note note);
+
+	List<Note> getLabels(Integer id);
+
 }

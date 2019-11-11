@@ -19,6 +19,10 @@ public interface LabelRepository {
 
 	void getId(Integer id);
 
-	List<Note> getNoteByLabelId(Integer id);
+	List<Note> getNoteByLabelId(String labelName);
+
+
+
+	int removeLabel(Integer labelId, Integer noteId);
 
 }

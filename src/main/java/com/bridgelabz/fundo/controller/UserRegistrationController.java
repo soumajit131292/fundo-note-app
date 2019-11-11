@@ -131,6 +131,3 @@ public class UserRegistrationController implements Serializable {
 		
 	}
 }
-
-
-
