@@ -1,5 +1,6 @@
 package com.bridgelabz.fundo.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,11 @@ import lombok.Data;
 @Entity
 @Table(name = "user_registration_details")
 
-public class UserDetailsForRegistration {
+public class UserDetailsForRegistration implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;

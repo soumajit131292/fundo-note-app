@@ -31,21 +31,4 @@ public class LoginRegistrationspringbootApplicationTests {
     assertEquals(1, userService.retriveUserFromDatabase().size());
 	}
 
-	/*public void updateUser()
-	{
-		String id="1";
-		String userDetails=
-		when(userService.updateUser(id, userDetails))
-	}
-	@Test
-	public void saveToDatabaseTest() {
-	UserDto userDetails=new UserDto("souma","roy","7003717208","male","soumajit131292@gmail.com","1234567890");	
-	when(userService.saveToDatabase(userDetails)).thenReturn(1);
-	//System.out.println(userService.retriveUserFromDatabase());
-	assertEquals(1,userService.retriveUserFromDatabase().size());
-	}*/
-	/*public void deleteUserTest()
-	{
-		
-	}*/
 }

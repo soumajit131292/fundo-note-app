@@ -46,18 +46,10 @@ public class UserRegistrationController implements Serializable {
 
 	@SuppressWarnings("unused")
 	@Autowired
-	private RedisTemplate<String, UserDetailsForRegistration> redisTemplate;
-
-	/*
-	 * public UserRegistrationController(RedisTemplate<String,
-	 * UserDetailsForRegistration> redisTemplate) { super(); this.redisTemplate =
-	 * redisTemplate; hashOperation = redisTemplate.opsForHash(); }
-	 */
+	private RedisTemplate<String, Object> redisTemplate;
 
 	@Autowired
 	private UserRepository userRepository;
-
-	private HashOperations hashOperation;
 
 	@GetMapping("/get")
 	public List<UserDto> getDetails() {
@@ -74,15 +66,15 @@ public class UserRegistrationController implements Serializable {
 		else
 			throw new UserNotFoundException("already registered");
 	}
-    
+
 	@PostMapping("/forgotpassword")
 	public ResponseEntity<ErrorResponse> forgotPassword(@RequestBody UserDto body) throws MessagingException {
-	
+
 		System.out.println("in forgot controller");
-			Integer id=userService.findIdOfCurrentUser(body.getEmail());
-			System.out.println("id");
-			userService.forgotPassword(id);
-			return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
+		Integer id = userService.findIdOfCurrentUser(body.getEmail());
+		System.out.println("id");
+		userService.forgotPassword(id);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
 	}
 
 	@PutMapping("/verify/{token}")
@@ -101,10 +93,10 @@ public class UserRegistrationController implements Serializable {
 		Integer id = userService.findIdOfCurrentUser(loginUser.getEmail());
 		String JwtToken = Util.generateToken(id);
 		List<UserDetailsForRegistration> details = userService.getUserbyId(id);
-		// System.out.println(details.get(0));
-		// redisTemplate.ops.set("key", JwtToken, details.get(0));
-		// hashOperation.put("key",JwtToken , details.get(0));
-		// redisTemplate.opsForValue().set(JwtToken, loginUser.getEmail());
+		System.out.println(details.get(0).getFirstName());
+		redisTemplate.opsForValue().set("JwtToken", details.get(0));
+		UserDetailsForRegistration user = (UserDetailsForRegistration) redisTemplate.opsForValue().get("JwtToken");
+		System.out.println(user.getFirstName());
 		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", JwtToken), HttpStatus.OK);
 	}
 
@@ -112,9 +104,7 @@ public class UserRegistrationController implements Serializable {
 	public ResponseEntity<ErrorResponse> deleteUserById(@PathVariable("id") Integer id) {
 		userService.deleteFromDatabase(id);
 		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
-
 	}
-	
 
 	@PutMapping("/resetpassword/{token}")
 	public ResponseEntity<ErrorResponse> updateUser(@PathVariable("token") String token,
@@ -124,10 +114,10 @@ public class UserRegistrationController implements Serializable {
 		userService.updateUser(token, userDetails);
 		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
 	}
+
 	@GetMapping("/loggedinuser")
-	public UserDetailsForRegistration getUser(@RequestHeader("token") String token)
-	{
-		return  userService.getUser(token);
-		
+	public UserDetailsForRegistration getUser(@RequestHeader("token") String token) {
+		return userService.getUser(token);
+
 	}
 }

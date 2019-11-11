@@ -4,9 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-
-import com.bridgelabz.fundo.model.UserDetailsForRegistration;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 
 
@@ -20,10 +18,11 @@ public class RedisCacheConfig {
 
 	
 	@Bean
-	public RedisTemplate<String, UserDetailsForRegistration> redisTemplate() {
-	    RedisTemplate<String, UserDetailsForRegistration> template = new RedisTemplate<String, UserDetailsForRegistration>();
+	public RedisTemplate<String, Object> redisTemplate() {
+	    RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
 	    template.setConnectionFactory(jedisConnectionFactory());
-	    template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
+	    //template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
+	    template.setKeySerializer(new StringRedisSerializer());
 	    return template;
 	}
 }

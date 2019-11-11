@@ -44,7 +44,7 @@ public class NoteServiceImpl implements NoteService {
 	@Autowired
 	private ElasticService elasticSearchService;
 	@Autowired
-	private RedisTemplate<String, UserDetailsForRegistration> redisTemplate;
+	private RedisTemplate<String, Object> redisTemplate;
 	
 
 	public Note dtoToEntity(NoteDto note) {
