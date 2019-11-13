@@ -21,7 +21,7 @@ public interface NoteService {
 
 	public List<Note> getAllNotes(String token);
 
-	public void changePin(String token, Integer noteId, NoteDto note, boolean status);
+	
 
 	public void sortByDateAscending(String token);
 
@@ -41,10 +41,11 @@ public interface NoteService {
 
 	public void deleteRemainder(String token, Integer noteId);
 
-	
+	void changePin(String token, Integer noteId);
+
+	public void setColor(String token, String colorCode, Integer noteId);
 
 	
 
-	
 	
 }

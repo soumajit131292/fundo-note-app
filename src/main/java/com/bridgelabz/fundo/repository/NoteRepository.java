@@ -37,4 +37,6 @@ public interface NoteRepository {
 
 	List<Note> getLabels(Integer id);
 
+	void getRemaindeNotes(Integer userId);
+
 }

@@ -1,5 +1,6 @@
 package com.bridgelabz.fundo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ import com.bridgelabz.fundo.dto.LabelDto;
 import com.bridgelabz.fundo.exception.ErrorResponse;
 import com.bridgelabz.fundo.model.Label;
 import com.bridgelabz.fundo.model.Note;
+import com.bridgelabz.fundo.model.NoteAndColab;
+import com.bridgelabz.fundo.model.UserDetailsForRegistration;
+import com.bridgelabz.fundo.service.ColabService;
 import com.bridgelabz.fundo.service.LabelService;
 
 @RestController
@@ -29,6 +33,9 @@ import com.bridgelabz.fundo.service.LabelService;
 public class LabelController {
 	@Autowired
 	private LabelService labelService;
+	
+	@Autowired
+	private ColabService colabService;
 
 	@PostMapping("/create/{noteId}")
 	public void createNoteLabel(@RequestBody LabelDto labelDto, @PathVariable Integer noteId, @RequestParam String token) {
@@ -39,41 +46,73 @@ public class LabelController {
 	public ResponseEntity<ErrorResponse> createLabel(@RequestHeader String token,@RequestBody LabelDto labelDto) {
 		labelService.createLabel(labelDto, token);
 		System.out.println("in label controller after finishing visit");
-		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null,null), HttpStatus.OK);
 	}
 	@PutMapping("/updatebylabelid/{labelId}")
 	public ResponseEntity<ErrorResponse> updateLabel( @PathVariable Integer labelId,@RequestBody LabelDto labelDto,@RequestHeader String token ) {
 		labelService.updateLabel(labelDto, token, labelId);
-		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null,null), HttpStatus.OK);
 	}
 	@DeleteMapping("/delete/{labelId}")
 	public ResponseEntity<ErrorResponse> deleteLabel(@PathVariable Integer labelId, @RequestHeader String token) {
 		System.out.println("in label delete");
 		labelService.deleteLabel(token, labelId);
-		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null,null), HttpStatus.OK);
 	}
 	@GetMapping("/getlabels/{token}")
 	public List<Label> getAllLabel(@PathVariable String token)
 	{
 		System.out.println("in label controller");
 		return labelService.getAllLabels(token);
+		
+		
+		
+		
+		
+		
 	}
 	@PutMapping("/update/{labelId}/{noteId}")
 	public ResponseEntity<ErrorResponse> addExistingLabelLabelOnNote(@PathVariable Integer labelId,@PathVariable Integer noteId, @RequestHeader String token) {
 		System.out.println("done in add label api");
 		labelService.addExistingLabelOnNote(labelId,noteId,token);
 		System.out.println("OKAY");
-		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null,null), HttpStatus.OK);
 	}
 	@GetMapping("/notebylabelid/{labelName}")
-	public List<Note> getNotesByLabelName(@PathVariable String labelName)
+	public ResponseEntity<ErrorResponse> getNotesByLabelName(@PathVariable String labelName,@RequestHeader("token") String token)
 	{
-	  return labelService.getNotesByLabelId(labelName);	
-	}
+	 
+	  
+	  
+	  
+	  
+	  
+		List<NoteAndColab> noteColab=new ArrayList<>();
+		List<Note> notes=	labelService.getNotesByLabelId(labelName);
+//		
+		List<UserDetailsForRegistration> users= new ArrayList<>();
+		for(Note n : notes) {
+			NoteAndColab c= new NoteAndColab();
+			c.setNote(n);
+			users=colabService.getCollaboratedList(token, n.getId());
+			c.setUser(users);
+			noteColab.add(c);
+		}
+//			
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null,noteColab), HttpStatus.OK);
+		}
+
+	  
+	  
+	  
+	  
+	  
+	  
+	
 	
 	@DeleteMapping("/deletelable/{labelId}/{noteId}")
 	public ResponseEntity<ErrorResponse> deleteLabelOnNote(@PathVariable Integer labelId,@PathVariable Integer noteId) {
 		labelService.removeLabel(labelId,noteId);
-		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null,null), HttpStatus.OK);
 	}
 	}

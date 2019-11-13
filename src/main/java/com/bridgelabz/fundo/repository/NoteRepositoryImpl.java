@@ -69,9 +69,10 @@ public class NoteRepositoryImpl implements NoteRepository {
 	@Transactional
 	public List<Note> getNotebyUserId(Integer id) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		return currentSession.createQuery("from Note where user_id='" + id + "'and inTrash='"+false+"'and isPinned='"+false+"'and isArchive='"+false+"'").getResultList();
+		return currentSession.createQuery("from Note where user_id='" + id + "'and inTrash='"+false+"'and isArchive='"+false+"'").getResultList();
 	}
 
+	
 	@Override
 	@Transactional
 	public void changePinStatus(Integer noteId, boolean isPinned) {
@@ -150,6 +151,14 @@ public class NoteRepositoryImpl implements NoteRepository {
 	public List<Note> getLabels(Integer id) {
 		Session currentSession = entityManager.unwrap(Session.class);
 		return currentSession.createQuery("from ColabModel where userId='" + id + "'").getResultList();
+	}
+
+	@Override
+	public void getRemaindeNotes(Integer userId) {
+		
+		
+		Session currentSession = entityManager.unwrap(Session.class);
+		currentSession.createQuery("from Note where remainder='" + userId + "'").getResultList();
 	}
 
 	

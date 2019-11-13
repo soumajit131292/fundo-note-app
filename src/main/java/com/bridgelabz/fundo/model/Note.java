@@ -43,6 +43,8 @@ public class Note {
 	private boolean isPinned;
 	@Column(name = "isArchive")
 	private boolean isArchive;
+	@Column(name="colorCode")
+	private String colorCode;
 	@Column(name = "remainder")
 	private LocalDateTime remainder;
 
@@ -81,7 +83,12 @@ public class Note {
 		}
 		colabsUser.add(theNote);
 	}
-	
+	public void removeColab(UserDetailsForRegistration theNote) {
+		if (colabsUser == null) {
+			colabsUser = new ArrayList<>();
+		}
+		colabsUser.remove(theNote);
+	}
 	
 
 

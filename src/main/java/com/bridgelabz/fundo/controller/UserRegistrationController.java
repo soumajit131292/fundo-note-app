@@ -62,7 +62,7 @@ public class UserRegistrationController implements Serializable {
 	@PostMapping("/register")
 	public ResponseEntity<ErrorResponse> registerUser(@RequestBody UserDto userDetails) throws MessagingException {
 		if (userService.saveToDatabase(userDetails) > 0)
-			return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
+			return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null,null), HttpStatus.OK);
 		else
 			throw new UserNotFoundException("already registered");
 	}
@@ -74,13 +74,13 @@ public class UserRegistrationController implements Serializable {
 		Integer id = userService.findIdOfCurrentUser(body.getEmail());
 		System.out.println("id");
 		userService.forgotPassword(id);
-		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null,null), HttpStatus.OK);
 	}
 
 	@PutMapping("/verify/{token}")
 	public ResponseEntity<ErrorResponse> verifyUserByMail(@PathVariable("token") String token) {
 		if (userService.verifyUser(token)) {
-			return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
+			return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null,null), HttpStatus.OK);
 		} else {
 			throw new UserNotFoundException("no data found");
 		}
@@ -97,13 +97,13 @@ public class UserRegistrationController implements Serializable {
 		redisTemplate.opsForValue().set("JwtToken", details.get(0));
 		UserDetailsForRegistration user = (UserDetailsForRegistration) redisTemplate.opsForValue().get("JwtToken");
 		System.out.println(user.getFirstName());
-		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", JwtToken), HttpStatus.OK);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", JwtToken,null), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/deleteuser/{id}")
 	public ResponseEntity<ErrorResponse> deleteUserById(@PathVariable("id") Integer id) {
 		userService.deleteFromDatabase(id);
-		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null,null), HttpStatus.OK);
 	}
 
 	@PutMapping("/resetpassword/{token}")
@@ -112,7 +112,7 @@ public class UserRegistrationController implements Serializable {
 		System.out.println("hello");
 		System.out.println(userDetails.getPassword());
 		userService.updateUser(token, userDetails);
-		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null), HttpStatus.OK);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null,null), HttpStatus.OK);
 	}
 
 	@GetMapping("/loggedinuser")

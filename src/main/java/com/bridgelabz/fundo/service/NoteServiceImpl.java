@@ -112,10 +112,17 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	@Override
-	public void changePin(String token, Integer noteId, NoteDto note, boolean status) {
+	public void changePin(String token, Integer noteId) {
 		Integer id = Util.parseToken(token);
+		
 		if (userService.isUserPresent(id)) {
-			noteDao.changePinStatus(noteId, status);
+			Note n = noteDao.getNotebyNoteId(noteId);
+
+			if (n.isPinned() == true)
+				n.setPinned(false);
+			else
+				n.setPinned(true);
+			noteDao.updateNote(noteId, n);
 		}
 	}
 
@@ -223,5 +230,20 @@ public class NoteServiceImpl implements NoteService {
 		}
 		
 	}
+
+	@Override
+	public void setColor(String token, String colorCode, Integer noteId) {
+		Integer userId = Util.parseToken(token);
+		if(userId>0)
+		{
+			Note note = noteDao.getNotebyNoteId(noteId);
+			note.setColorCode(colorCode);
+			noteDao.savenotewithRemainder(note);
+			
+		}
+		
+	}
+
+
 
 }

@@ -21,7 +21,7 @@ public class ColabService {
 	@Autowired
 	private NoteRepository noteDao;
 
-	public void addCollaborator(String token, String emailId, Integer noteId) {
+	public String addCollaborator(String token, String emailId, Integer noteId) {
 
 		Integer id = Util.parseToken(token);
 		List<UserDetailsForRegistration> owner = userDao.getUserbyId(id);
@@ -41,7 +41,7 @@ public class ColabService {
 
 		note.addColab(colabUser);
 		noteDao.saveColab(note);
-
+        return emailId;
 	}
 
 	public List<Note> getCollaboratedNoteList(Integer id) {
@@ -60,5 +60,26 @@ public class ColabService {
 		
 		return colabUser;
  }
+
+	public void deletCollaboratedList(String token,String emailId, Integer noteId) {
+		Integer id = Util.parseToken(token);
+		List<UserDetailsForRegistration> owner = userDao.getUserbyId(id);
+
+		UserDetailsForRegistration ownerUser = owner.get(0);
+		UserDetailsForRegistration colabUser = userDao.getUserByMail(emailId);
+
+		List<Note> ownerNotes = noteDao.getNotebyUserId(id);
+		Long numberOfNotes = ownerNotes.stream().filter(n -> n.getId() == noteId).count();
+
+		List<Note> checkColab = noteDao.getNotebyUserId(colabUser.getId());
+
+		List<Note> colabNote = checkColab.stream().filter(notes -> notes.getId() == noteId)
+				.collect(Collectors.toList());
+
+		Note note = noteDao.getNotebyNoteId(noteId);
+		note.removeColab(colabUser);
+		noteDao.saveColab(note);
+		System.out.println("deleted");
+	}
 
 }
