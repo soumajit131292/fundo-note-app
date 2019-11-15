@@ -29,6 +29,7 @@ import com.bridgelabz.fundo.exception.UserNotFoundException;
 import com.bridgelabz.fundo.model.LoginUser;
 import com.bridgelabz.fundo.model.UserDetailsForRegistration;
 import com.bridgelabz.fundo.repository.UserRepository;
+import com.bridgelabz.fundo.service.NoteService;
 import com.bridgelabz.fundo.service.UserService;
 import com.bridgelabz.fundo.util.Util;
 
@@ -50,6 +51,9 @@ public class UserRegistrationController implements Serializable {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private NoteService noteService;
 
 	@GetMapping("/get")
 	public List<UserDto> getDetails() {

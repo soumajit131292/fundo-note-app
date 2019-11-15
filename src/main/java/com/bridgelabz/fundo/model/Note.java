@@ -74,7 +74,7 @@ public class Note {
 			CascadeType.REFRESH })
 	@JoinTable(name = "colab_note", joinColumns = { @JoinColumn(name = "note_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "user_id") })
-	@JsonIgnore
+	
 	private List<UserDetailsForRegistration> colabsUser;
 
 	public void addColab(UserDetailsForRegistration theNote) {

@@ -8,6 +8,7 @@ import javax.mail.internet.MimeMessage;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -33,7 +34,9 @@ public class UserServiceImpl implements UserService {
 	private JavaMailSender emailSender;
 	@Autowired
 	private Util token;
-
+	@Autowired
+	private RedisTemplate<String, Object> redisTemplate;
+	
 	private String hashPassword(String plainTextPassword) {
 		return bcryptPasswordEncoder.encode(plainTextPassword);
 	}
@@ -66,8 +69,19 @@ public class UserServiceImpl implements UserService {
 		Integer id = findIdOfCurrentUser(loginUser.getEmail());
 		if (id != 0) {
 			List<UserDetailsForRegistration> result = userdaoimpl.checkUser(id);
-			if (bcryptPasswordEncoder.matches(loginUser.getPassword(), result.get(0).getPassword()))
+			if (bcryptPasswordEncoder.matches(loginUser.getPassword(), result.get(0).getPassword())) {
 				System.out.println("hello");
+				
+				//String JwtToken = Util.generateToken(id);
+				
+				
+//				redisTemplate.opsForValue().set("JwtToken", details.get(0));
+//				UserDetailsForRegistration user = (UserDetailsForRegistration) redisTemplate.opsForValue().get("JwtToken");
+////				
+//				UserDetailsForRegistration user = (UserDetailsForRegistration) redisTemplate.opsForValue().get("JwtToken");
+//				System.out.println(user.getFirstName());
+				//return JwtToken;
+				}
 			else
 				throw new UserNotFoundException("invalid credientials");
 		}

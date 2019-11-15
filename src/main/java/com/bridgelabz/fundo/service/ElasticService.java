@@ -8,7 +8,7 @@ public interface ElasticService {
 
 	void save(Note object);
 	void update(Note note);
-	void delete(String noteId);
+	void delete(Integer noteId);
 	List<Note> search(String search, String field);
 
 }

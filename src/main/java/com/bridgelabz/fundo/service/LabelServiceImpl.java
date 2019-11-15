@@ -34,6 +34,10 @@ public class LabelServiceImpl implements LabelService {
 		if (userRepository.isValidUser(id)) {
 			Note note = notetRepository.getNotebyNoteId(noteId);
 			// Note notes = note.get(0);
+			System.out.println(label.getLabelName());
+			label.setUserId(id);
+			labelRepository.saveLabel(label);
+			
 			note.addLabel(label);
 			labelRepository.saveNoteLabels(note);
 		}

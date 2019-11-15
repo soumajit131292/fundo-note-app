@@ -21,7 +21,6 @@ public class RedisCacheConfig {
 	public RedisTemplate<String, Object> redisTemplate() {
 	    RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
 	    template.setConnectionFactory(jedisConnectionFactory());
-	    //template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
 	    template.setKeySerializer(new StringRedisSerializer());
 	    return template;
 	}

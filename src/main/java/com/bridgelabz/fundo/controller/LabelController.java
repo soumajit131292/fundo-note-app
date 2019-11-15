@@ -38,7 +38,7 @@ public class LabelController {
 	private ColabService colabService;
 
 	@PostMapping("/create/{noteId}")
-	public void createNoteLabel(@RequestBody LabelDto labelDto, @PathVariable Integer noteId, @RequestParam String token) {
+	public void createNoteLabel(@RequestBody LabelDto labelDto, @PathVariable("noteId") Integer noteId, @RequestHeader String token) {
 		labelService.createNoteLabel(labelDto, token, noteId);
 	}
 	

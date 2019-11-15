@@ -40,9 +40,9 @@ public class ElasticServiceImpl implements ElasticService {
 	@Autowired
 	private ObjectMapper mapper;
 
-	private static final String index = "notes";
+	private static final String index = "fundoonotes";
 
-	private static final String type = "notes_data";
+	private static final String type = "notes";
 
 	@Override
 	public void save(Note note) {
@@ -59,8 +59,9 @@ public class ElasticServiceImpl implements ElasticService {
 //	curl -XGET 'http://localhost:9200/notes_search/pretty=true' 
 	@Override
 	public void update(Note note) {
-		UpdateRequest request = new UpdateRequest(index, type, note.getId() + "");
+		
 		Map<String, String> noteMap = mapper.convertValue(note, Map.class);
+		UpdateRequest request = new UpdateRequest(index, type, note.getId() + "");
 		request.doc(noteMap);
 		try {
 			UpdateResponse response = client.update(request, RequestOptions.DEFAULT);
@@ -71,8 +72,8 @@ public class ElasticServiceImpl implements ElasticService {
 	}
 
 	@Override
-	public void delete(String noteId) {
-		DeleteRequest request = new DeleteRequest(index, type, noteId);
+	public void delete(Integer noteId) {
+		DeleteRequest request = new DeleteRequest(index, type, Integer.toString(noteId));
 		try {
 			DeleteResponse response = client.delete(request, RequestOptions.DEFAULT);
 			log.info(response.toString());
@@ -85,13 +86,15 @@ public class ElasticServiceImpl implements ElasticService {
 	public List<Note> search(String search, String field) {
 		SearchSourceBuilder builder = new SearchSourceBuilder();
 		builder.query(QueryBuilders.termQuery(field, search));
-		SearchRequest request = new SearchRequest("notes");
+		SearchRequest request = new SearchRequest("fundoonotes");
 		request.source(builder);
 		MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder(field, search);
 		matchQueryBuilder.fuzziness(Fuzziness.AUTO);
-		matchQueryBuilder.prefixLength(3);
+		matchQueryBuilder.prefixLength(2);
 		matchQueryBuilder.maxExpansions(10);
+		matchQueryBuilder.minimumShouldMatch();
 		builder.query(matchQueryBuilder);
+		
 		List<Note> notes = new ArrayList<Note>();
 
 		try {
