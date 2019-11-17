@@ -21,6 +21,7 @@ import com.bridgelabz.fundo.model.LoginUser;
 import com.bridgelabz.fundo.model.UserDetailsForRegistration;
 import com.bridgelabz.fundo.repository.UserRepositoryImpl;
 import com.bridgelabz.fundo.util.Util;
+import com.sun.tools.sjavac.Log;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -125,10 +126,14 @@ public class UserServiceImpl implements UserService {
 	public List<UserDto> retriveUserFromDatabase() {
 		List<UserDto> users = new ArrayList<UserDto>();
 		List<UserDetailsForRegistration> details = userdaoimpl.retriveUserDetails();
+		System.out.println(details.toString());
+		System.out.println(details.size());
+//		Log.info("details   "+details.size());
 		for (UserDetailsForRegistration obj : details) {
 			UserDto abc = modelmapper.map(obj, UserDto.class);
 			users.add(abc);
 		}
+		System.out.println(users.size());
 		return users;
 	}
 

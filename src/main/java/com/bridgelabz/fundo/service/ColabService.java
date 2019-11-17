@@ -46,7 +46,8 @@ public class ColabService {
 
 	public List<Note> getCollaboratedNoteList(Integer id) {
 		UserDetailsForRegistration owner = userDao.getUserbyId(id).get(0);
-		List<Note> ownerNotes = userDao.getUserbyId(owner.getId()).get(0).getColabsNote();
+	//	List<Note> ownerNotes = userDao.getUserbyId(owner.getId()).get(0).getColabsNote();
+		List<Note> ownerNotes=owner.getColabsNote();
 		return ownerNotes;
 	}
 

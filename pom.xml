@@ -122,7 +122,13 @@
      <artifactId>commons-pool2</artifactId>
      
 </dependency>
-
+<!-- https://mvnrepository.com/artifact/org.hamcrest/hamcrest-library -->
+<dependency>
+    <groupId>org.hamcrest</groupId>
+    <artifactId>hamcrest-library</artifactId>
+   
+    <scope>test</scope>
+</dependency>
 	</dependencies>
 
 	<build>

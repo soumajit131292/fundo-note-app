@@ -71,7 +71,7 @@ public class NoteServiceImpl implements NoteService {
 
 		obj.addNote(createdNoteByUser);
 		noteDao.saveNote(obj);
-		elasticSearchService.save(createdNoteByUser);
+		//elasticSearchService.save(createdNoteByUser);
 //		redisTemplate.opsForValue().set("JwtToken", details.get(0));
 
 
@@ -89,7 +89,7 @@ public class NoteServiceImpl implements NoteService {
 			createdNote.setTitle(note.getTitle());
 			createdNote.setUpdatedOn(timeStamp);
 			noteDao.updateNote(noteId, createdNote);
-			elasticSearchService.update(createdNote);
+			//elasticSearchService.update(createdNote);
 			//elasticSearchService.update(createdNote);
 			System.out.println("note inserted");
 		}
@@ -102,7 +102,7 @@ public class NoteServiceImpl implements NoteService {
 		if (userService.isUserPresent(id)) {
 			
 			noteDao.deleteNote(noteId);
-			elasticSearchService.delete(noteId);
+			//elasticSearchService.delete(noteId);
 			System.out.println("note deleted");
 		}
 	}
