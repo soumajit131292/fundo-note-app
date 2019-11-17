@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMqConfig {
 
-	static final String topicExchangeName = "spring-boot-exchange";
-	static final String queueName = "spring-boot";
+	static final String topicExchangeName = "spring.boot.exchange";
+	static final String queueName = "spring.boot";
 	static final String routingKey = "spring";
 
 	@Bean

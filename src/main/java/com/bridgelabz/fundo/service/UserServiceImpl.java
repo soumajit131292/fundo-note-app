@@ -18,10 +18,11 @@ import com.bridgelabz.fundo.dto.ResetPassword;
 import com.bridgelabz.fundo.dto.UserDto;
 import com.bridgelabz.fundo.exception.UserNotFoundException;
 import com.bridgelabz.fundo.model.LoginUser;
+import com.bridgelabz.fundo.model.Message;
 import com.bridgelabz.fundo.model.UserDetailsForRegistration;
 import com.bridgelabz.fundo.repository.UserRepositoryImpl;
+import com.bridgelabz.fundo.util.RabbitMqUtil;
 import com.bridgelabz.fundo.util.Util;
-import com.sun.tools.sjavac.Log;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -37,6 +38,10 @@ public class UserServiceImpl implements UserService {
 	private Util token;
 	@Autowired
 	private RedisTemplate<String, Object> redisTemplate;
+	@Autowired
+	private RabbitMqUtil rabbitMqUtility;
+	@Autowired
+	private Message message;
 	
 	private String hashPassword(String plainTextPassword) {
 		return bcryptPasswordEncoder.encode(plainTextPassword);
@@ -98,7 +103,11 @@ public class UserServiceImpl implements UserService {
 		
 		String generatedToken = token.generateToken(id);
 		String url = "http://localhost:3000/resetpassword/";
-		sendEmail(url, generatedToken, userdaoimpl.getUserById(id));
+		//sendEmail(url, generatedToken, userdaoimpl.getUserById(id));
+		message.setText(url + generatedToken);
+		message.setSubject("For Verification");
+		message.setTo(userdaoimpl.getUserById(id));
+		rabbitMqUtility.Producemessage(message);
 		
 		return true;
 	}
@@ -157,7 +166,11 @@ public class UserServiceImpl implements UserService {
 		String url = "http://localhost:3000/verify/";
 		if (userdaoimpl.setToDatabase(userRegistrationDetails) > 0) {
 			String generatedToken = token.generateToken(findIdOfCurrentUser(userDetails.getEmail()));
-			sendEmail(url, generatedToken, userDetails.getEmail());
+			
+			message.setText(url + generatedToken);
+			message.setSubject("Reset Password");
+			message.setTo(userDetails.getEmail());
+			rabbitMqUtility.Producemessage(message);
 			return 1;
 		}
 		System.out.println("after checking everything now returning to main");
