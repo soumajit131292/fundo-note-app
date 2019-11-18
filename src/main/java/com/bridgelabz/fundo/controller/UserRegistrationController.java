@@ -93,14 +93,14 @@ public class UserRegistrationController implements Serializable {
 	@PostMapping("/login")
 	public ResponseEntity<ErrorResponse> login(@RequestBody LoginUser loginUser) {
 		userService.doLogin(loginUser);
-		System.out.println("login success");
+//		System.out.println("login success");
 		Integer id = userService.findIdOfCurrentUser(loginUser.getEmail());
 		String JwtToken = Util.generateToken(id);
-		List<UserDetailsForRegistration> details = userService.getUserbyId(id);
-		System.out.println(details.get(0).getFirstName());
-		redisTemplate.opsForValue().set("JwtToken", details.get(0));
-		UserDetailsForRegistration user = (UserDetailsForRegistration) redisTemplate.opsForValue().get("JwtToken");
-		System.out.println(user.getFirstName());
+//		List<UserDetailsForRegistration> details = userService.getUserbyId(id);
+//		System.out.println(details.get(0).getFirstName());
+//		redisTemplate.opsForValue().set("JwtToken", details.get(0));
+//		UserDetailsForRegistration user = (UserDetailsForRegistration) redisTemplate.opsForValue().get("JwtToken");
+//		System.out.println(user.getFirstName());
 		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", JwtToken,null), HttpStatus.OK);
 	}
 

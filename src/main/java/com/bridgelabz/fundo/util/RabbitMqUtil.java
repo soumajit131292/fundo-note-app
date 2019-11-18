@@ -22,7 +22,7 @@ public class RabbitMqUtil {
 
 	private String exchange = "spring.boot.exchange";
 
-	/**** my.queue.key *****/
+	
 	private String routingKey = "spring";
 
 	public void Producemessage(Message message) {

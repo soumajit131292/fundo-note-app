@@ -66,8 +66,7 @@ public class UserServiceImpl implements UserService {
 			return userDetails.get(0).getId();		
 		}
 		else
-		throw new UserNotFoundException("user is not valid");
-		
+		throw new UserNotFoundException("user is not valid");		
 	}
 
 	@Override

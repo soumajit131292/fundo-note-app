@@ -26,7 +26,7 @@ public class NoteServiceImpl implements NoteService {
 	 * eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJJZCI6M30.Q-uA_a-lyKpuLvkvlv8Eb0h4ja1-
 	 * Z0SCejPvRqtHbkzwTRLzf1LTW-8fFXzjHpNYI6JtjM19MRIm49sWawu1dg
 	 */
-	/*
+	/*souma
 	 * eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJJZCI6MX0.
 	 * dL6z9dPcxpXnrQgKN_3b8yRKVuaNGMC2-
 	 * 0o9W3SMY7oPGTizuoKkPp2MHJbCQ3Uv5S4IDfDpmhHbodVRU_mh5g
@@ -45,7 +45,6 @@ public class NoteServiceImpl implements NoteService {
 	private ElasticService elasticSearchService;
 	@Autowired
 	private RedisTemplate<String, Object> redisTemplate;
-	
 
 	public Note dtoToEntity(NoteDto note) {
 		return modelMapper.map(note, Note.class);
@@ -65,15 +64,15 @@ public class NoteServiceImpl implements NoteService {
 		createdNoteByUser.setArchive(false);
 		createdNoteByUser.setInTrash(false);
 		createdNoteByUser.setPinned(false);
-		List<UserDetailsForRegistration> user = userDao.getUserbyId(id);
+		List<UserDetailsForRegistration> users = userDao.getUserbyId(id);
+		System.out.println("before map");
 
-		UserDetailsForRegistration obj = user.get(0);
+		UserDetailsForRegistration obj = users.get(0);
 
 		obj.addNote(createdNoteByUser);
 		noteDao.saveNote(obj);
-		//elasticSearchService.save(createdNoteByUser);
+		// elasticSearchService.save(createdNoteByUser);
 //		redisTemplate.opsForValue().set("JwtToken", details.get(0));
-
 
 	}
 
@@ -84,13 +83,13 @@ public class NoteServiceImpl implements NoteService {
 			Date date = new Date();
 			Timestamp timeStamp = new Timestamp(date.getTime());
 			Note createdNote = noteDao.getNotebyNoteId(noteId);
-			
+
 			createdNote.setDescription(note.getDescription());
 			createdNote.setTitle(note.getTitle());
 			createdNote.setUpdatedOn(timeStamp);
 			noteDao.updateNote(noteId, createdNote);
-			//elasticSearchService.update(createdNote);
-			//elasticSearchService.update(createdNote);
+//			elasticSearchService.update(createdNote);
+
 			System.out.println("note inserted");
 		}
 	}
@@ -98,11 +97,11 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public void deleteNote(String token, Integer noteId) {
 		Integer id = Util.parseToken(token);
-		
+
 		if (userService.isUserPresent(id)) {
-			
+
 			noteDao.deleteNote(noteId);
-			//elasticSearchService.delete(noteId);
+			// elasticSearchService.delete(noteId);
 			System.out.println("note deleted");
 		}
 	}
@@ -112,8 +111,8 @@ public class NoteServiceImpl implements NoteService {
 		Integer id = Util.parseToken(token);
 		List<Note> arrayOfNotes = new ArrayList<>();
 		arrayOfNotes = noteDao.getNotebyUserId(id);
-		
-		List<Note> colabNotes=colabService.getCollaboratedNoteList(id);
+
+		List<Note> colabNotes = colabService.getCollaboratedNoteList(id);
 		arrayOfNotes.addAll(colabNotes);
 		return arrayOfNotes;
 	}
@@ -121,7 +120,7 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public void changePin(String token, Integer noteId) {
 		Integer id = Util.parseToken(token);
-		
+
 		if (userService.isUserPresent(id)) {
 			Note n = noteDao.getNotebyNoteId(noteId);
 
@@ -215,42 +214,37 @@ public class NoteServiceImpl implements NoteService {
 	}
 
 	@Override
-	public void setRemainder(String token,LocalDateTime remainder,Integer noteId) {
+	public void setRemainder(String token, LocalDateTime remainder, Integer noteId) {
 		Integer userId = Util.parseToken(token);
-		if(userId>0)
-		{
-		Note note = noteDao.getNotebyNoteId(noteId);
-		note.setRemainder(remainder);
-		noteDao.savenotewithRemainder(note);
+		if (userId > 0) {
+			Note note = noteDao.getNotebyNoteId(noteId);
+			note.setRemainder(remainder);
+			noteDao.savenotewithRemainder(note);
 		}
-		
+
 	}
 
 	@Override
 	public void deleteRemainder(String token, Integer noteId) {
 		Integer userId = Util.parseToken(token);
-		if(userId>0)
-		{
-		Note note = noteDao.getNotebyNoteId(noteId);
-		note.setRemainder(null);
-		noteDao.savenotewithRemainder(note);
+		if (userId > 0) {
+			Note note = noteDao.getNotebyNoteId(noteId);
+			note.setRemainder(null);
+			noteDao.savenotewithRemainder(note);
 		}
-		
+
 	}
 
 	@Override
 	public void setColor(String token, String colorCode, Integer noteId) {
 		Integer userId = Util.parseToken(token);
-		if(userId>0)
-		{
+		if (userId > 0) {
 			Note note = noteDao.getNotebyNoteId(noteId);
 			note.setColorCode(colorCode);
 			noteDao.savenotewithRemainder(note);
-			
+
 		}
-		
+
 	}
-
-
 
 }
