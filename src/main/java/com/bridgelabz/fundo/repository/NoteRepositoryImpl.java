@@ -69,7 +69,7 @@ public class NoteRepositoryImpl implements NoteRepository {
 	@Transactional
 	public List<Note> getNotebyUserId(Integer id) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		return currentSession.createQuery("from Note where user_id='" + id + "'and inTrash='"+false+"'and isArchive='"+false+"'").getResultList();
+		return currentSession.createQuery("from Note  where user_id='" + id + "'and inTrash='"+false+"'and isArchive='"+false+"'").getResultList();
 	}
 
 	

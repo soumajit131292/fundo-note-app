@@ -166,10 +166,11 @@ public class UserServiceImpl implements UserService {
 		if (userdaoimpl.setToDatabase(userRegistrationDetails) > 0) {
 			String generatedToken = token.generateToken(findIdOfCurrentUser(userDetails.getEmail()));
 			
-			message.setText(url + generatedToken);
-			message.setSubject("Reset Password");
-			message.setTo(userDetails.getEmail());
-			rabbitMqUtility.Producemessage(message);
+//			message.setText(url + generatedToken);
+//			message.setSubject("Reset Password");
+//			message.setTo(userDetails.getEmail());
+//			rabbitMqUtility.Producemessage(message);
+			sendEmail(url,generatedToken,userDetails.getEmail());
 			return 1;
 		}
 		System.out.println("after checking everything now returning to main");

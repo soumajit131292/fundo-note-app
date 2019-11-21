@@ -20,23 +20,23 @@ public class RabbitMqUtil {
 	@Autowired
 	private AmqpTemplate amqpTemplate;
 
-	private String exchange = "spring.boot.exchange";
+	private String exchange = "my_queue_exchange";
 
 	
-	private String routingKey = "spring";
+	private String routingKey = "my.queue.key";
 
 	public void Producemessage(Message message) {
+		System.out.println("hey");
 		amqpTemplate.convertAndSend(exchange, routingKey, message);
 	}
 
-	@RabbitListener
+	@RabbitListener(queues="my.queue.key")
 	public void sendEmail(Message message) throws MessagingException {
 		MimeMessage mimeMessage = emailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 		helper.setTo(message.getTo());
 		helper.setSubject(message.getSubject());
 		helper.setText(message.getText());
-
 		emailSender.send(mimeMessage);
 	}
 
