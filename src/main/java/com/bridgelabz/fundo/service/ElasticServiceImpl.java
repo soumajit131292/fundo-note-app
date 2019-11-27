@@ -73,7 +73,7 @@ public class ElasticServiceImpl implements ElasticService {
 
 	@Override
 	public void delete(Integer noteId) {
-		DeleteRequest request = new DeleteRequest(index, type, Integer.toString(noteId));
+		DeleteRequest request = new DeleteRequest(index, type, noteId+"");
 		try {
 			DeleteResponse response = client.delete(request, RequestOptions.DEFAULT);
 			log.info(response.toString());
@@ -92,7 +92,7 @@ public class ElasticServiceImpl implements ElasticService {
 		matchQueryBuilder.fuzziness(Fuzziness.AUTO);
 		matchQueryBuilder.prefixLength(2);
 		matchQueryBuilder.maxExpansions(10);
-		matchQueryBuilder.minimumShouldMatch();
+		
 		builder.query(matchQueryBuilder);
 		
 		List<Note> notes = new ArrayList<Note>();

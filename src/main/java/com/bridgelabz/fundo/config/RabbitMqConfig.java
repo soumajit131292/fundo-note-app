@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMqConfig {
 
 	static final String topicExchangeName = "my_queue_exchange";
-	static final String routingKey = "my.queue.key";
+	static final String bindingKey = "my.queue.*";
 
 	@Bean
 	Queue queue() {
-		return new Queue(routingKey, true);
+		return new Queue(bindingKey, true);
 	}
 
 	@Bean
@@ -25,6 +25,6 @@ public class RabbitMqConfig {
 
 	@Bean
 	Binding binding(Queue queue, TopicExchange exchange) {
-		return BindingBuilder.bind(queue).to(exchange).with(routingKey);	
+		return BindingBuilder.bind(queue).to(exchange).with(bindingKey);	
 	}
 }
