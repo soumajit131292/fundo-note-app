@@ -83,7 +83,6 @@ public class NoteServiceImpl implements NoteService {
 			Date date = new Date();
 			Timestamp timeStamp = new Timestamp(date.getTime());
 			Note createdNote = noteDao.getNotebyNoteId(noteId);
-
 			createdNote.setDescription(note.getDescription());
 			createdNote.setTitle(note.getTitle());
 			createdNote.setUpdatedOn(timeStamp);

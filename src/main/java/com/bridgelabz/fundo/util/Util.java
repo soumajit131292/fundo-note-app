@@ -1,8 +1,10 @@
 package com.bridgelabz.fundo.util;
 
+import org.springframework.context.annotation.Configuration;
+
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-
+@Configuration
 public class Util {
 	private static final String secret = "Soumajit";
 
