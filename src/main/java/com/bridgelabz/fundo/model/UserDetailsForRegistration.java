@@ -1,6 +1,7 @@
 package com.bridgelabz.fundo.model;
 
 import java.io.Serializable;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mysql.cj.jdbc.Blob;
 
 import lombok.Data;
 
@@ -48,7 +50,7 @@ public class UserDetailsForRegistration implements Serializable{
 	@Column(name = "active_status")
 	private String activeStatus;
 	@Column(name="pro_pic")
-	private String picture;
+	private URL picture;
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
 
@@ -74,5 +76,4 @@ public class UserDetailsForRegistration implements Serializable{
 		}
 		colabsNote.add(theNote);
 	}
-
 }

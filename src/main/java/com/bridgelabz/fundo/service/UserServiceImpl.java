@@ -70,13 +70,13 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void doLogin(LoginUser loginUser) {
+	public UserDetailsForRegistration doLogin(LoginUser loginUser) {
 		Integer id = findIdOfCurrentUser(loginUser.getEmail());
 		if (id != 0) {
 			List<UserDetailsForRegistration> result = userdaoimpl.checkUser(id);
 			if (bcryptPasswordEncoder.matches(loginUser.getPassword(), result.get(0).getPassword())) {
 				System.out.println("hello");
-				
+				return result.get(0);
 				//String JwtToken = Util.generateToken(id);
 				
 				
@@ -90,6 +90,7 @@ public class UserServiceImpl implements UserService {
 			else
 				throw new UserNotFoundException("invalid credientials");
 		}
+		return null;
 	}
 
 	@Override

@@ -22,9 +22,9 @@ public class ConfigurationClaass {
 		return new BCryptPasswordEncoder();
 	}
 
-//	@Bean
-//	public Util token() {
-//		return new Util();
-//	}
+	@Bean
+	public Util token() {
+		return new Util();
+	}
 
 }

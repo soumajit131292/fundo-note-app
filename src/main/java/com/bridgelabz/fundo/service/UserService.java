@@ -19,7 +19,7 @@ public interface UserService {
 
 	public boolean verifyUser(String token);
 
-	void doLogin(LoginUser loginUser);
+	UserDetailsForRegistration doLogin(LoginUser loginUser);
 
 	boolean isUserPresent(Integer Id);
 

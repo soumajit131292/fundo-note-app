@@ -5,12 +5,14 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.services.s3.model.S3Object;
 import com.bridgelabz.fundo.service.AwsBucket;
 
 @RestController
@@ -21,13 +23,13 @@ public class AwsS3BucketStorage {
 	private AwsBucket awsBucket;
 
 	@PostMapping(value="/uploadFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public String uploadFile(@RequestPart(value = "pic") MultipartFile pic) {
+	public String uploadFile(@RequestPart(value = "pic") MultipartFile pic,@RequestHeader(value="token") String token) {
 		System.out.println("in upload controlller");
-		return this.awsBucket.uploadFile(pic);
+		return this.awsBucket.uploadFile(pic,token);
 	}
 
 	@GetMapping("/deleteFile/{fileUrl}")
-	public void deleteFile(@RequestParam(value="fileUrl")String fileUrl) {
-		this.awsBucket.retrivePic(fileUrl);
+	public S3Object deleteFile(@RequestParam(value="fileUrl")String fileUrl) {
+		return this.awsBucket.retrivePic(fileUrl);
 	}
 }

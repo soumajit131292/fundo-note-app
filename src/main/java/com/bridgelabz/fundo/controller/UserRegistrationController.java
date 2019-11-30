@@ -92,7 +92,7 @@ public class UserRegistrationController implements Serializable {
 
 	@PostMapping("/login")
 	public ResponseEntity<ErrorResponse> login(@RequestBody LoginUser loginUser) {
-		userService.doLogin(loginUser);
+		UserDetailsForRegistration obj=userService.doLogin(loginUser);
 //		System.out.println("login success");
 		Integer id = userService.findIdOfCurrentUser(loginUser.getEmail());
 		String JwtToken = Util.generateToken(id);
@@ -101,7 +101,7 @@ public class UserRegistrationController implements Serializable {
 //		redisTemplate.opsForValue().set("JwtToken", details.get(0));
 //		UserDetailsForRegistration user = (UserDetailsForRegistration) redisTemplate.opsForValue().get("JwtToken");
 //		System.out.println(user.getFirstName());
-		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", JwtToken,null), HttpStatus.OK);
+		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", JwtToken,obj), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/deleteuser/{id}")

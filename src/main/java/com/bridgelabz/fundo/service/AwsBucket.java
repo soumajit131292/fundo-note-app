@@ -1,10 +1,11 @@
 package com.bridgelabz.fundo.service;
 
-import java.io.File;
-
 import org.springframework.web.multipart.MultipartFile;
 
+import com.amazonaws.services.s3.model.S3Object;
+
 public interface AwsBucket {
-	String uploadFile(MultipartFile multipartFile);
-	void retrivePic(String fileName);
+	
+	S3Object retrivePic(String fileName);
+	String uploadFile(MultipartFile multipartFile, String token);
 }

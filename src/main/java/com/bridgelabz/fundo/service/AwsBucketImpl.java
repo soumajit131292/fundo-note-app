@@ -3,31 +3,45 @@ package com.bridgelabz.fundo.service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import com.bridgelabz.fundo.model.UserDetailsForRegistration;
+import com.bridgelabz.fundo.repository.UserRepository;
+import com.bridgelabz.fundo.repository.UserRepositoryImpl;
+import com.bridgelabz.fundo.util.Util;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class AwsBucketImpl implements AwsBucket {
 
 	@Autowired
 	private AmazonS3 s3Client;
-	private String endpointUrl = "https://s3.ap-south-1.amazonaws.com";
+	@Autowired
+	private Util token;
+	@Autowired
+	private UserRepository userDao;
+	@Autowired
+	private UserRepositoryImpl userdaoimpl;
 
 	private String bucketName = "fundoonote";
 
 	private File convertMultiPartToFile(MultipartFile file) throws IOException {
+
 		File convFile = new File(file.getOriginalFilename());
-		FileOutputStream fos = new FileOutputStream(convFile);
-		fos.write(file.getBytes());
-		fos.close();
 		return convFile;
 	}
 
@@ -37,40 +51,51 @@ public class AwsBucketImpl implements AwsBucket {
 
 	private String uploadFileTos3bucket(String fileName, File file) {
 		try {
-			
-			s3Client.putObject(
-					new PutObjectRequest(bucketName, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
+			log.info("", s3Client.listBuckets());
+			s3Client.putObject(new PutObjectRequest(bucketName, fileName, file));
 		} catch (AmazonServiceException e) {
 			return "uploadFileTos3bucket().Uploading failed :" + e.getMessage();
 		}
-		return "Uploading Successfull -> ";
+		return "Success";
 
 	}
 
 	@Override
-	public String uploadFile(MultipartFile multipartFile) {
-	
+	public String uploadFile(MultipartFile multipartFile, String userToken) {
+		String result = "UNSUCCESSFUL";
 		String fileUrl = "";
-		String status="";
-	    try {
-	        File file = convertMultiPartToFile(multipartFile);
-	        String fileName = generateFileName(multipartFile);
-	        fileUrl = endpointUrl + "/" + bucketName + "/" + fileName;
-	        status=uploadFileTos3bucket(fileName, file);
-	        System.out.println(status);
-	        System.out.println(fileUrl);
-	        //file.delete();
-	        System.out.println("after uploading");
-	    } catch (Exception e) {
-	       e.printStackTrace();
-	    }
-	    return fileUrl;
+		String status = "";
+		try {
+			File file = convertMultiPartToFile(multipartFile);
+			String fileName = generateFileName(multipartFile);
+
+			status = uploadFileTos3bucket(fileName, file);
+
+			if (status == "Success") {
+				GeneratePresignedUrlRequest generatePresignedUrlRequest = new GeneratePresignedUrlRequest(bucketName,
+						fileName).withMethod(HttpMethod.GET);
+
+				URL url = s3Client.generatePresignedUrl(generatePresignedUrlRequest);
+				System.out.println(url);
+				Integer id = token.parseToken(userToken);
+				List<UserDetailsForRegistration> users = userDao.getUserbyId(id);
+				users.get(0).setPicture(url);
+				userdaoimpl.saveToDatabase(users.get(0));
+				result = "UPLOADED PICTURE";
+			}
+			System.out.println(status);
+			System.out.println(fileUrl);
+			// file.delete();
+			System.out.println("after uploading");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	@Override
-	public void retrivePic(String fileName) {
-		
-		S3Object file=s3Client.getObject(bucketName, fileName);
-		System.out.println("Content-Type: " + file.getObjectMetadata().getContentType());
+	public S3Object retrivePic(String fileName) {
+
+		return null;
 	}
 }
