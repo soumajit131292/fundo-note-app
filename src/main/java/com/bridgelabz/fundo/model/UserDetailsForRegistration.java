@@ -47,6 +47,8 @@ public class UserDetailsForRegistration implements Serializable{
 	private String password;
 	@Column(name = "active_status")
 	private String activeStatus;
+	@Column(name="pro_pic")
+	private String picture;
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
 

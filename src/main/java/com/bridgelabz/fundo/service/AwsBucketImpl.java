@@ -13,6 +13,7 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 @Service
 public class AwsBucketImpl implements AwsBucket {
 
@@ -36,6 +37,7 @@ public class AwsBucketImpl implements AwsBucket {
 
 	private String uploadFileTos3bucket(String fileName, File file) {
 		try {
+			
 			s3Client.putObject(
 					new PutObjectRequest(bucketName, fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
 		} catch (AmazonServiceException e) {
@@ -65,4 +67,10 @@ public class AwsBucketImpl implements AwsBucket {
 	    return fileUrl;
 	}
 
+	@Override
+	public void retrivePic(String fileName) {
+		
+		S3Object file=s3Client.getObject(bucketName, fileName);
+		System.out.println("Content-Type: " + file.getObjectMetadata().getContentType());
+	}
 }
