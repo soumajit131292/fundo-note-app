@@ -12,21 +12,19 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 @Configuration
 public class AmazonClient {
+	
+	/***** SHOULD NOT BE HARD CODED ****/
 
-//	private String endpointUrl = "https://s3.us-east-2.amazonaws.com";
-//
-//	private String bucketName = "fundoonote";
+	private String accessKey = "AKIAQJCIHXAMNLF2IZEX";
+	private String secretKey = "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";
+	private String region = "ap-south-1";
 
 	@Bean
 	public AmazonS3 initializeAmazon() {
-		String accessKey = "AKIAQJCIHXAMNLF2IZEX";
-		String secretKey = "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";
-		String region="ap-south-1";
-
-		AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
 		
-		AmazonS3 s3client = AmazonS3ClientBuilder.standard()
-				.withRegion(Regions.fromName(region))
+		AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+
+		AmazonS3 s3client = AmazonS3ClientBuilder.standard().withRegion(Regions.fromName(region))
 				.withCredentials(new AWSStaticCredentialsProvider(credentials)).build();
 
 		return s3client;
