@@ -15,8 +15,8 @@ public class AmazonClient {
 	
 	/***** SHOULD NOT BE HARD CODED ****/
 
-	private String accessKey = "AKIAQJCIHXAMNLF2IZEX";
-	private String secretKey = "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";
+	private String accessKey = ${accessKey};
+	private String secretKey = ${secretKey};
 	private String region = "ap-south-1";
 
 	@Bean
