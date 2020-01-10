@@ -40,9 +40,9 @@ public class ElasticServiceImpl implements ElasticService {
 	@Autowired
 	private ObjectMapper mapper;
 
-	private static final String index = "fundoonotes";
+	private static final String index = "fundoonote";
 
-	private static final String type = "notes";
+	private static final String type = "note";
 
 	@Override
 	public void save(Note note) {
@@ -86,7 +86,7 @@ public class ElasticServiceImpl implements ElasticService {
 	public List<Note> search(String search, String field) {
 		SearchSourceBuilder builder = new SearchSourceBuilder();
 		builder.query(QueryBuilders.termQuery(field, search));
-		SearchRequest request = new SearchRequest("fundoonotes");
+		SearchRequest request = new SearchRequest(index);
 		request.source(builder);
 		MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder(field, search);
 		matchQueryBuilder.fuzziness(Fuzziness.AUTO);
@@ -113,7 +113,7 @@ public class ElasticServiceImpl implements ElasticService {
 		} catch (IOException e) {
 			throw new UserNotFoundException(e.getMessage());
 		}
-		System.out.println(notes);
+		System.out.println(notes.toString());
 		return notes;
 	}
 

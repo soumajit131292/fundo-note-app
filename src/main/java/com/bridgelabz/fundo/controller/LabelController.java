@@ -33,15 +33,12 @@ import com.bridgelabz.fundo.service.LabelService;
 public class LabelController {
 	@Autowired
 	private LabelService labelService;
-	
 	@Autowired
 	private ColabService colabService;
-
 	@PostMapping("/create/{noteId}")
 	public void createNoteLabel(@RequestBody LabelDto labelDto, @PathVariable("noteId") Integer noteId, @RequestHeader String token) {
 		labelService.createNoteLabel(labelDto, token, noteId);
 	}
-	
 	@PostMapping("/createlabel")
 	public ResponseEntity<ErrorResponse> createLabel(@RequestHeader String token,@RequestBody LabelDto labelDto) {
 		labelService.createLabel(labelDto, token);
@@ -63,13 +60,7 @@ public class LabelController {
 	public List<Label> getAllLabel(@PathVariable String token)
 	{
 		System.out.println("in label controller");
-		return labelService.getAllLabels(token);
-		
-		
-		
-		
-		
-		
+		return labelService.getAllLabels(token);	
 	}
 	@PutMapping("/update/{labelId}/{noteId}")
 	public ResponseEntity<ErrorResponse> addExistingLabelLabelOnNote(@PathVariable Integer labelId,@PathVariable Integer noteId, @RequestHeader String token) {
@@ -80,16 +71,9 @@ public class LabelController {
 	}
 	@GetMapping("/notebylabelid/{labelName}")
 	public ResponseEntity<ErrorResponse> getNotesByLabelName(@PathVariable String labelName,@RequestHeader("token") String token)
-	{
-	 
-	  
-	  
-	  
-	  
-	  
+	{ 	  
 		List<NoteAndColab> noteColab=new ArrayList<>();
-		List<Note> notes=	labelService.getNotesByLabelId(labelName);
-//		
+		List<Note> notes=	labelService.getNotesByLabelId(labelName);	
 		List<UserDetailsForRegistration> users= new ArrayList<>();
 		for(Note n : notes) {
 			NoteAndColab c= new NoteAndColab();
@@ -98,18 +82,8 @@ public class LabelController {
 			c.setUser(users);
 			noteColab.add(c);
 		}
-//			
 		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null,noteColab), HttpStatus.OK);
 		}
-
-	  
-	  
-	  
-	  
-	  
-	  
-	
-	
 	@DeleteMapping("/deletelable/{labelId}/{noteId}")
 	public ResponseEntity<ErrorResponse> deleteLabelOnNote(@PathVariable Integer labelId,@PathVariable Integer noteId) {
 		labelService.removeLabel(labelId,noteId);

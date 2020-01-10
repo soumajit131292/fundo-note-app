@@ -22,5 +22,10 @@ public UserDto()
 		this.email = email;
 		this.password = password;
 	}
+	public UserDto(String password,String email) {
+		super();
+		this.password=password;
+		this.email=email;
+	}
 
 }

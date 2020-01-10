@@ -21,12 +21,13 @@ public class ColabService {
 
 	@Autowired
 	private NoteRepository noteDao;
+	@Autowired
+	private ElasticService elasticSearchService;
 
 	public String addCollaborator(String token, String emailId, Integer noteId) {
 
 		Integer id = Util.parseToken(token);
 		List<UserDetailsForRegistration> owner = userDao.getUserbyId(id);
-
 		UserDetailsForRegistration ownerUser = owner.get(0);
 		UserDetailsForRegistration colabUser = userDao.getUserByMail(emailId);
 		if (colabUser.getEmail() == null)
@@ -36,15 +37,14 @@ public class ColabService {
 		if (numberOfNotes == 0)
 			throw new UserNotFoundException("invalid credientials");
 		List<Note> checkColab = noteDao.getNotebyUserId(colabUser.getId());
-
 		List<Note> colabNote = checkColab.stream().filter(notes -> notes.getId() == noteId)
 				.collect(Collectors.toList());
 		if (!colabNote.isEmpty())
 			throw new UserNotFoundException("invalid credientials");
 		Note note = noteDao.getNotebyNoteId(noteId);
-
 		note.addColab(colabUser);
 		noteDao.saveColab(note);
+		elasticSearchService.save(note);
 		return emailId;
 	}
 

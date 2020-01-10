@@ -26,11 +26,8 @@ public class NoteServiceImpl implements NoteService {
 	 * eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJJZCI6M30.Q-uA_a-lyKpuLvkvlv8Eb0h4ja1-
 	 * Z0SCejPvRqtHbkzwTRLzf1LTW-8fFXzjHpNYI6JtjM19MRIm49sWawu1dg
 	 */
-	/*souma
-	 * eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJJZCI6MX0.
-	 * dL6z9dPcxpXnrQgKN_3b8yRKVuaNGMC2-
-	 * 0o9W3SMY7oPGTizuoKkPp2MHJbCQ3Uv5S4IDfDpmhHbodVRU_mh5g
-	 */
+	// souma  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJJZCI6MX0.dL6z9dPcxpXnrQgKN_3b8yRKVuaNGMC2-0o9W3SMY7oPGTizuoKkPp2MHJbCQ3Uv5S4IDfDpmhHbodVRU_mh5g
+	 
 	@Autowired
 	private ColabService colabService;
 	@Autowired
@@ -55,24 +52,23 @@ public class NoteServiceImpl implements NoteService {
 
 		Integer id = Util.parseToken(token);
 		System.out.println("hello man");
-
 		Note createdNoteByUser = dtoToEntity(note);
 		Date date = new Date();
 		Timestamp timeStamp = new Timestamp(date.getTime());
 		createdNoteByUser.setCreatedOn(timeStamp);
-
 		createdNoteByUser.setArchive(false);
 		createdNoteByUser.setInTrash(false);
 		createdNoteByUser.setPinned(false);
+		createdNoteByUser.addLabel(null);
+		createdNoteByUser.addColab(null);
 		List<UserDetailsForRegistration> users = userDao.getUserbyId(id);
 		System.out.println("before map");
-
 		UserDetailsForRegistration obj = users.get(0);
 
 		obj.addNote(createdNoteByUser);
 		noteDao.saveNote(obj);
-		// elasticSearchService.save(createdNoteByUser);
-//		redisTemplate.opsForValue().set("JwtToken", details.get(0));
+		 elasticSearchService.save(createdNoteByUser);
+		//redisTemplate.opsForValue().set("JwtToken", details.get(0));
 
 	}
 
@@ -87,7 +83,7 @@ public class NoteServiceImpl implements NoteService {
 			createdNote.setTitle(note.getTitle());
 			createdNote.setUpdatedOn(timeStamp);
 			noteDao.updateNote(noteId, createdNote);
-//			elasticSearchService.update(createdNote);
+			elasticSearchService.update(createdNote);
 
 			System.out.println("note inserted");
 		}
@@ -96,13 +92,10 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public void deleteNote(String token, Integer noteId) {
 		Integer id = Util.parseToken(token);
-
 		if (userService.isUserPresent(id)) {
-
 			noteDao.deleteNote(noteId);
-			// elasticSearchService.delete(noteId);
-			System.out.println("note deleted");
-		}
+			 elasticSearchService.delete(noteId);
+					}
 	}
 
 	@Override
@@ -200,7 +193,8 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public List<Note> searchNotes(String token, String keyword, String field) {
 		Integer userId = Util.parseToken(token);
-
+//System.out.println(userId);
+		System.out.println("hi");
 		List<Integer> noteIds = noteDao.findNoteIdByUserId(userId);
 
 		if (noteIds.size() > 0) {
@@ -241,6 +235,7 @@ public class NoteServiceImpl implements NoteService {
 			Note note = noteDao.getNotebyNoteId(noteId);
 			note.setColorCode(colorCode);
 			noteDao.savenotewithRemainder(note);
+			elasticSearchService.update(note);
 
 		}
 

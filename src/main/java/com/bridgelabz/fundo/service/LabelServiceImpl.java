@@ -26,7 +26,8 @@ public class LabelServiceImpl implements LabelService {
 	private ModelMapper modelMapper;
 	@Autowired
 	private UserRepository userRepository;
-
+	@Autowired
+	private ElasticService elasticSearchService;
 	@Override
 	public void createNoteLabel(LabelDto labelDto, String token, Integer noteId) {
 		Label label = modelMapper.map(labelDto, Label.class);
@@ -40,6 +41,7 @@ public class LabelServiceImpl implements LabelService {
 			
 			note.addLabel(label);
 			labelRepository.saveNoteLabels(note);
+			elasticSearchService.update(note);
 		}
 	}
 
@@ -63,6 +65,8 @@ public class LabelServiceImpl implements LabelService {
 		note.addLabel(label);
 		
 		labelRepository.saveNoteLabels(note);
+		elasticSearchService.update(note);
+		
 	}
 
 	@Override
@@ -88,6 +92,7 @@ public class LabelServiceImpl implements LabelService {
 			
 			note.addLabel(label);
 			labelRepository.saveNoteLabels(note);
+			elasticSearchService.save(note);
 		}
 	}
 
@@ -121,6 +126,7 @@ public class LabelServiceImpl implements LabelService {
 		Label label = labelRepository.getLabelByLabelId(labelId);
 		note.removLabel(label);
 		labelRepository.saveNoteLabels(note);
+		elasticSearchService.update(note);
 
 	}
 }

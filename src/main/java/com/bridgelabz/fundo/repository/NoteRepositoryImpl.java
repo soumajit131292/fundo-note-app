@@ -104,7 +104,7 @@ public class NoteRepositoryImpl implements NoteRepository {
 	public List<Integer> findNoteIdByUserId(Integer userId) {
 		Session currentSession = entityManager.unwrap(Session.class);
 		List<Integer> noteIds=new ArrayList<>();	
-		List<Note> notes=currentSession.createQuery("from Note where user_id='" + userId + "'and inTrash=true").getResultList();
+		List<Note> notes=currentSession.createQuery("from Note where user_id='" + userId + "'").getResultList();
 		for(Note obj : notes)
 		{
 			noteIds.add(obj.getId());

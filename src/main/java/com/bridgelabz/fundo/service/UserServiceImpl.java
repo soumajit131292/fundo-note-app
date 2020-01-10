@@ -190,9 +190,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDetailsForRegistration getUser(String userToken) {
 		Integer Id = token.parseToken(userToken);
-		return  userdaoimpl.getLoggedInUser(Id);
-		
-		
-		
+		return  userdaoimpl.getLoggedInUser(Id);		
 	}
 }

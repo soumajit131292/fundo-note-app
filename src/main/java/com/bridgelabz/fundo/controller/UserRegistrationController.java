@@ -74,9 +74,9 @@ public class UserRegistrationController implements Serializable {
 	@PostMapping("/forgotpassword")
 	public ResponseEntity<ErrorResponse> forgotPassword(@RequestBody UserDto body) throws MessagingException {
 
-		System.out.println("in forgot controller");
+		
 		Integer id = userService.findIdOfCurrentUser(body.getEmail());
-		System.out.println("id");
+		
 		userService.forgotPassword(id);
 		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null,null), HttpStatus.OK);
 	}
@@ -95,6 +95,7 @@ public class UserRegistrationController implements Serializable {
 		UserDetailsForRegistration obj=userService.doLogin(loginUser);
 		Integer id = userService.findIdOfCurrentUser(loginUser.getEmail());
 		String JwtToken = Util.generateToken(id);
+		System.out.println("success");
 	/***CORRECCT CODE FOR OBJECT AND RETRIVE OF REDIS TEMPLATE ***/	
 		
 		
@@ -118,8 +119,7 @@ public class UserRegistrationController implements Serializable {
 	@PutMapping("/resetpassword/{token}")
 	public ResponseEntity<ErrorResponse> updateUser(@PathVariable("token") String token,
 			@RequestBody ResetPassword userDetails) {
-		System.out.println("hello");
-		System.out.println(userDetails.getPassword());
+		
 		userService.updateUser(token, userDetails);
 		return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null,null), HttpStatus.OK);
 	}
