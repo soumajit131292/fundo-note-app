@@ -17,6 +17,7 @@ import com.bridgelabz.fundo.model.Note;
 import com.bridgelabz.fundo.model.UserDetailsForRegistration;
 import com.bridgelabz.fundo.repository.NoteRepository;
 import com.bridgelabz.fundo.repository.UserRepository;
+import com.bridgelabz.fundo.repository.UserRepositoryImpl;
 import com.bridgelabz.fundo.util.Util;
 
 @Service
@@ -27,7 +28,8 @@ public class NoteServiceImpl implements NoteService {
 	 * Z0SCejPvRqtHbkzwTRLzf1LTW-8fFXzjHpNYI6JtjM19MRIm49sWawu1dg
 	 */
 	// souma  eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJJZCI6MX0.dL6z9dPcxpXnrQgKN_3b8yRKVuaNGMC2-0o9W3SMY7oPGTizuoKkPp2MHJbCQ3Uv5S4IDfDpmhHbodVRU_mh5g
-	 
+	@Autowired
+	private UserRepositoryImpl userdaoimpl;
 	@Autowired
 	private ColabService colabService;
 	@Autowired
@@ -51,8 +53,15 @@ public class NoteServiceImpl implements NoteService {
 	public void createANote(NoteDto note, String token) {
 
 		Integer id = Util.parseToken(token);
-		System.out.println("hello man");
-		Note createdNoteByUser = dtoToEntity(note);
+		
+		//System.out.println(users.toString());
+		System.out.println("hello man ");
+		System.out.println(note);
+		//Note createdNoteByUser = modelMapper.map(note, Note.class);
+		Note createdNoteByUser=new Note();
+		createdNoteByUser.setTitle(note.getTitle());
+		createdNoteByUser.setDescription(note.getDescription());
+		System.out.println(createdNoteByUser.getTitle());
 		Date date = new Date();
 		Timestamp timeStamp = new Timestamp(date.getTime());
 		createdNoteByUser.setCreatedOn(timeStamp);
@@ -63,11 +72,16 @@ public class NoteServiceImpl implements NoteService {
 		createdNoteByUser.addColab(null);
 		List<UserDetailsForRegistration> users = userDao.getUserbyId(id);
 		System.out.println("before map");
+		System.out.println(users.toString());
 		UserDetailsForRegistration obj = users.get(0);
+        System.out.println(obj.toString());
+		//obj.addNote(createdNoteByUser);
+        users.get(0).addNote(createdNoteByUser);
 
-		obj.addNote(createdNoteByUser);
-		noteDao.saveNote(obj);
-		 elasticSearchService.save(createdNoteByUser);
+		noteDao.saveNote(users.get(0));
+		//elasticSearchService.save(createdNoteByUser);
+		System.out.println("going back");
+		//return row;
 		//redisTemplate.opsForValue().set("JwtToken", details.get(0));
 
 	}
@@ -75,10 +89,11 @@ public class NoteServiceImpl implements NoteService {
 	@Override
 	public void updateNote(NoteDto note, String token, Integer noteId) {
 		Integer id = Util.parseToken(token);
-		if (userService.isUserPresent(id)) {
+		if (userdaoimpl.isValidUser(id)) {
 			Date date = new Date();
 			Timestamp timeStamp = new Timestamp(date.getTime());
 			Note createdNote = noteDao.getNotebyNoteId(noteId);
+			System.out.println(createdNote.toString());
 			createdNote.setDescription(note.getDescription());
 			createdNote.setTitle(note.getTitle());
 			createdNote.setUpdatedOn(timeStamp);
@@ -91,9 +106,10 @@ public class NoteServiceImpl implements NoteService {
 
 	@Override
 	public void deleteNote(String token, Integer noteId) {
+		int row;
 		Integer id = Util.parseToken(token);
-		if (userService.isUserPresent(id)) {
-			noteDao.deleteNote(noteId);
+		if (userdaoimpl.isValidUser(id)) {
+			row=noteDao.deleteNote(noteId);
 			 elasticSearchService.delete(noteId);
 					}
 	}

@@ -12,7 +12,10 @@ public class RabbitMqConfig {
 
 	static final String topicExchangeName = "my_queue_exchange";
 	static final String bindingKey = "my.queue.*";
+	
 
+	
+	
 	@Bean
 	Queue queue() {
 		return new Queue(bindingKey, true);

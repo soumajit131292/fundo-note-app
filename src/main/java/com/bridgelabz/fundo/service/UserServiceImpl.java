@@ -71,10 +71,15 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDetailsForRegistration doLogin(LoginUser loginUser) {
-		Integer id = findIdOfCurrentUser(loginUser.getEmail());
-		if (id != 0) {
-			List<UserDetailsForRegistration> result = userdaoimpl.checkUser(id);
+		List<UserDetailsForRegistration> userDetails = userdaoimpl.getId(loginUser.getEmail());
+		System.out.println("outside any if "+userDetails.toString());
+		
+		//Integer id = findIdOfCurrentUser(loginUser.getEmail());
+		if (userDetails.size()>0) {
+			List<UserDetailsForRegistration> result = userdaoimpl.checkUser(userDetails.get(0).getId());
+			System.out.println("outside 2nd if "+result.toString());
 			if (bcryptPasswordEncoder.matches(loginUser.getPassword(), result.get(0).getPassword())) {
+				System.out.println("hii "+result.toString());
 				System.out.println("hello");
 				return result.get(0);
 				//String JwtToken = Util.generateToken(id);
@@ -135,6 +140,7 @@ public class UserServiceImpl implements UserService {
 	public List<UserDto> retriveUserFromDatabase() {
 		List<UserDto> users = new ArrayList<UserDto>();
 		List<UserDetailsForRegistration> details = userdaoimpl.retriveUserDetails();
+		//System.out.println(details.);
 		System.out.println(details.toString());
 		System.out.println(details.size());
 //		Log.info("details   "+details.size());

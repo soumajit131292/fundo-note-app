@@ -7,7 +7,8 @@ import javax.mail.MessagingException;
 
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.HashOperations;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,12 +36,16 @@ import com.bridgelabz.fundo.util.Util;
 
 @RestController
 @RequestMapping("/user")
+@PropertySource("classpath:app.properties")
 @CrossOrigin(allowedHeaders = "*", origins = "*", exposedHeaders = { "token" })
 public class UserRegistrationController implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private Logger logger = Logger.getLogger(this.getClass());
+
+	@Autowired
+	private Environment environment;
 
 	@Autowired
 	private UserService userService;
@@ -65,6 +70,7 @@ public class UserRegistrationController implements Serializable {
 
 	@PostMapping("/register")
 	public ResponseEntity<ErrorResponse> registerUser(@RequestBody UserDto userDetails) throws MessagingException {
+		System.out.println(environment.getProperty("password"));
 		if (userService.saveToDatabase(userDetails) > 0)
 			return new ResponseEntity<>(new ErrorResponse(HttpStatus.OK.value(), "success", null,null), HttpStatus.OK);
 		else

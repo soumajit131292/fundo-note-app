@@ -26,10 +26,10 @@ public class NoteRepositoryImpl implements NoteRepository {
 
 	@Override
 	@Transactional
-	public void saveNote(UserDetailsForRegistration note) {
+	public int saveNote(UserDetailsForRegistration note) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		currentSession.save(note);
-		System.out.println("note saved");
+		return (int) currentSession.save(note);
+		//System.out.println("note saved");
 	}
 	
 	@Override
@@ -60,9 +60,10 @@ public class NoteRepositoryImpl implements NoteRepository {
 
 	@Override
 	@Transactional
-	public void deleteNote(Integer noteId) {
+	public int deleteNote(Integer noteId) {
 		Session currentSession = entityManager.unwrap(Session.class);
-		currentSession.createQuery("delete from Note where id='" + noteId + "'").executeUpdate();
+		int row=currentSession.createQuery("delete from Note where id='" + noteId + "'").executeUpdate();
+		return row;
 	}
 
 	@Override

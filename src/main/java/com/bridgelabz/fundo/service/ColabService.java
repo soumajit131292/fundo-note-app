@@ -50,8 +50,6 @@ public class ColabService {
 
 	public List<Note> getCollaboratedNoteList(Integer id) {
 		UserDetailsForRegistration owner = userDao.getUserbyId(id).get(0);
-		// List<Note> ownerNotes =
-		// userDao.getUserbyId(owner.getId()).get(0).getColabsNote();
 		List<Note> ownerNotes = owner.getColabsNote();
 		return ownerNotes;
 	}
@@ -73,6 +71,7 @@ public class ColabService {
 
 		UserDetailsForRegistration ownerUser = owner.get(0);
 		UserDetailsForRegistration colabUser = userDao.getUserByMail(emailId);
+		System.out.println(colabUser.toString());
 
 		List<Note> ownerNotes = noteDao.getNotebyUserId(id);
 		Long numberOfNotes = ownerNotes.stream().filter(n -> n.getId() == noteId).count();
@@ -85,6 +84,7 @@ public class ColabService {
 		Note note = noteDao.getNotebyNoteId(noteId);
 		note.removeColab(colabUser);
 		noteDao.saveColab(note);
+		elasticSearchService.save(note);
 		System.out.println("deleted");
 	}
 
